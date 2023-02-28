@@ -1,0 +1,22 @@
+---
+title: "Project_Outline"
+---
+
+# Project Problem and Motivation
+
+-   The title of your project
+
+-   A short description of not more than 350 word summarising the motivation, objectives, main features of the application your team are going to build, and
+
+-   The project proposal.
+    This should be in a web blog page (remember to provide a link at eLearn).
+
+# Projects Objective
+
+# Data
+
+# Story Board
+
+# Timeline
+
+# References

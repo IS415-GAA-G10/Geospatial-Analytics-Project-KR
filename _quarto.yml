@@ -1,0 +1,24 @@
+project:
+  type: website
+
+website:
+  title: "IS415-GAA-Project"
+  navbar:
+    left:
+    - text: "Project Outline"
+      href: "Project_Outline.html"
+    - text: "Rshiny Application"
+    right: 
+      - href: index.qmd
+        text: Home
+      - icon: github
+      - href: about.qmd
+
+format:
+  html:
+    theme: journal
+    css: styles.css
+    toc: true
+
+editor: visual
+
