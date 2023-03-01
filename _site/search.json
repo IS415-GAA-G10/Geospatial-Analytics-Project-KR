@@ -16,8 +16,8 @@
   {
     "objectID": "Project_Outline.html",
     "href": "Project_Outline.html",
-    "title": "Project_Outline",
+    "title": "Geographical Weighted Regression on Seoul’s financial crimes",
     "section": "",
-    "text": "Project Problem and Motivation\n\nThe title of your project\nA short description of not more than 350 word summarising the motivation, objectives, main features of the application your team are going to build, and\nThe project proposal. This should be in a web blog page (remember to provide a link at eLearn).\n\n\n\nProjects Objective\n\n\nData\n\n\nStory Board\n\n\nTimeline\n\n\nReferences"
+    "text": "Project Motivation\nFinancial crimes around the world have been on the rise. In particular, Seoul has maintained its crime rates to be relatively consistent with its other regions despite having the highest population density in South Korea. One possible reason could be because the number of police officers in Seoul have been increasing. In 2011, there were approximately 24990 police officers and by 2016, the number of police officers amounted to 27350. However, this is just an assumption, which is why to test this assumption, it brings us to our project objective.\n\n\nProjects Objective\nThe objective of this project is to allow the end-user to use our model in assessing what are the key factors that influence financial crimes and how much these factors explain the high/low financial crime rates in the country of their choice. The results of this model will hopefully provide insights on how to reduce the occurrence of financial crimes to the user. By using Seoul, we hope to showcase how our app operates and what kind of insights we can get by applying our model to a selected country.\n\n\nData\n\nSeoul’s crime occurrence\nEconomically inactive population by County\nPolice post locations\nBankruptcy rates\nUnemployment rates\nPopulation Density\n\n\n\nStory Board\n\n\nTimeline\n\n\nReferences"
   }
 ]

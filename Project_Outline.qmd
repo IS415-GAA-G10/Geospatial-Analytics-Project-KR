@@ -1,22 +1,32 @@
 ---
-title: "Project_Outline"
+title: "Geographical Weighted Regression on Seoul's financial crimes"
 ---
 
-# Project Problem and Motivation
+# [*Project Motivation*]{.underline}
 
--   The title of your project
+Financial crimes around the world have been on the rise.
+In particular, Seoul has maintained its [crime rates](https://www-statista-com.libproxy.smu.edu.sg/statistics/1249396/south-korea-crime-rate-by-region/?locale=en) to be relatively consistent with its other regions despite having the [highest population density](https://www-statista-com.libproxy.smu.edu.sg/statistics/1112322/south-korea-population-density-by-province/) in South Korea.
+One possible reason could be because the [number of police officers](https://www-statista-com.libproxy.smu.edu.sg/statistics/1290877/south-korea-number-of-police-officers-in-seoul/) in Seoul have been increasing.
+In 2011, there were approximately 24990 police officers and by 2016, the number of police officers amounted to 27350.
+However, this is just an assumption, which is why to test this assumption, it brings us to our project objective.
 
--   A short description of not more than 350 word summarising the motivation, objectives, main features of the application your team are going to build, and
+# [*Projects Objective*]{.underline}
 
--   The project proposal.
-    This should be in a web blog page (remember to provide a link at eLearn).
+The objective of this project is to allow the end-user to use our model in assessing what are the key factors that influence financial crimes and how much these factors explain the high/low financial crime rates in the country of their choice.
+The results of this model will hopefully provide insights on how to reduce the occurrence of financial crimes to the user.
+By using Seoul, we hope to showcase how our app operates and what kind of insights we can get by applying our model to a selected country.
 
-# Projects Objective
+# [*Data*]{.underline}
 
-# Data
+1.  Seoul's crime occurrence
+2.  Economically inactive population by County
+3.  Police post locations
+4.  Bankruptcy rates
+5.  Unemployment rates
+6.  Population Density
 
-# Story Board
+# [*Story Board*]{.underline}
 
-# Timeline
+# [*Timeline*]{.underline}
 
-# References
+# [*References*]{.underline}
