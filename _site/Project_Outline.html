@@ -113,6 +113,7 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#project-motivation" id="toc-project-motivation" class="nav-link active" data-scroll-target="#project-motivation"><u><em>Project Motivation</em></u></a></li>
   <li><a href="#projects-objective" id="toc-projects-objective" class="nav-link" data-scroll-target="#projects-objective"><u><em>Projects Objective</em></u></a></li>
   <li><a href="#data" id="toc-data" class="nav-link" data-scroll-target="#data"><u><em>Data</em></u></a></li>
+  <li><a href="#literature-review" id="toc-literature-review" class="nav-link" data-scroll-target="#literature-review"><u><em>Literature Review</em></u></a></li>
   <li><a href="#story-board" id="toc-story-board" class="nav-link" data-scroll-target="#story-board"><u><em>Story Board</em></u></a></li>
   <li><a href="#timeline" id="toc-timeline" class="nav-link" data-scroll-target="#timeline"><u><em>Timeline</em></u></a></li>
   <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references"><u><em>References</em></u></a></li>
@@ -145,27 +146,66 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="projects-objective" class="level1">
 <h1><u><em>Projects Objective</em></u></h1>
-<p>The objective of this project is to allow the end-user to use our model in assessing what are the key factors that influence financial crimes and how much these factors explain the high/low financial crime rates in the country of their choice. The results of this model will hopefully provide insights on how to reduce the occurrence of financial crimes to the user. By using Seoul, we hope to showcase how our app operates and what kind of insights we can get by applying our model to a selected country.</p>
+<p>The objective of this project is to allow the end-user to use our model in assessing what are the key factors that influence financial crimes and how much these factors explain the high/low financial crime rates in the country of their choice. The results of this model will hopefully provide insights on how to reduce the occurrence of financial crimes to the user. By using Seoul, we hope to showcase how our app operates so that our model can be applied to your selected country.</p>
 </section>
 <section id="data" class="level1">
 <h1><u><em>Data</em></u></h1>
-<ol type="1">
-<li>Seoul’s crime occurrence</li>
-<li>Economically inactive population by County</li>
-<li>Police post locations</li>
-<li>Bankruptcy rates</li>
-<li>Unemployment rates</li>
-<li>Population Density</li>
-</ol>
+<ul>
+<li><p>Crime data:</p>
+<ul>
+<li><a href="https://kosis.kr/statHtml/statHtml.do?orgId=135&amp;tblId=TX_13501_A048&amp;vw_cd=MT_ETITLE&amp;list_id=C_9&amp;scrId=&amp;language=en&amp;seqNo=&amp;lang_mode=en&amp;obj_var_id=&amp;itm_id=&amp;conn_path=MT_ETITLE&amp;path=%252Feng%252FstatisticsList%252FstatisticsListIndex.do" class="uri">https://kosis.kr/statHtml/statHtml.do?orgId=135&amp;tblId=TX_13501_A048&amp;vw_cd=MT_ETITLE&amp;list_id=C_9&amp;scrId=&amp;language=en&amp;seqNo=&amp;lang_mode=en&amp;obj_var_id=&amp;itm_id=&amp;conn_path=MT_ETITLE&amp;path=%252Feng%252FstatisticsList%252FstatisticsListIndex.do</a>&nbsp;</li>
+</ul></li>
+<li><p>Geospatial Data&nbsp;</p>
+<ul>
+<li><a href="https://gadm.org/download_country_v2.html#google_vignette" class="uri">https://gadm.org/download_country_v2.html#google_vignette</a></li>
+</ul></li>
+<li><p>Population</p>
+<ul>
+<li><a href="https://data.humdata.org/dataset/kontur-boundaries-korea-republic-of" class="uri">https://data.humdata.org/dataset/kontur-boundaries-korea-republic-of</a>&nbsp;</li>
+</ul></li>
+<li><p>Police post locations</p>
+<ul>
+<li><a href="http://download.geofabrik.de/asia/south-korea.html" class="uri">http://download.geofabrik.de/asia/south-korea.html</a>&nbsp;</li>
+</ul></li>
+<li><p>Unemployment</p>
+<ul>
+<li>Data: <a href="https://kosis.kr/statHtml/statHtml.do?orgId=101&amp;tblId=DT_1DA7107S&amp;vw_cd=MT_ETITLE&amp;list_id=B15&amp;scrId=&amp;language=en&amp;seqNo=&amp;lang_mode=en&amp;obj_var_id=&amp;itm_id=&amp;conn_path=MT_ETITLE&amp;path=%252Feng%252FstatisticsList%252FstatisticsListIndex.do" class="uri">https://kosis.kr/statHtml/statHtml.do?orgId=101&amp;tblId=DT_1DA7107S&amp;vw_cd=MT_ETITLE&amp;list_id=B15&amp;scrId=&amp;language=en&amp;seqNo=&amp;lang_mode=en&amp;obj_var_id=&amp;itm_id=&amp;conn_path=MT_ETITLE&amp;path=%252Feng%252FstatisticsList%252FstatisticsListIndex.do</a></li>
+</ul></li>
+</ul>
+</section>
+<section id="literature-review" class="level1">
+<h1><u><em>Literature Review</em></u></h1>
+<p>The purpose of this review aims to explore the potential of Geographically Weighted Regression (GWR) analysis for understanding the spatial patterns of financial crime in South Korea.</p>
+<p>A Korean researcher used GWR analysis to examine the relationship between crime and socio-economic factors in Seoul, South Korea. The study found that the spatial patterns of crime vary across different regions of the city and that the relationship between crime and socio-economic factors is also spatially variable. The models they use include the Spatial Error Model, Multiple Regression, Bayesian Hierarchical Mode and many more, to compare the different independent variables.</p>
+<p>GWR analysis can be applied to financial crime in South Korea to identify the spatial patterns of different types of financial crime and to explore the relationship between financial crime and socio-economic factors at the local level.</p>
+<p>For example, the methodology can be used to examine the relationship between financial crime and factors such as income, education, and unemployment at the local level. This can provide insights into the underlying drivers of financial crime in different regions of South Korea and can inform the development of more effective policies for preventing and combating financial crime.</p>
+<p>Thus, GWR analysis is a promising methodology for understanding the spatial patterns of financial crime in South Korea. While there is limited research on the application of GWR analysis to financial crime in South Korea, further research in this area could contribute to the development of more effective strategies for preventing and combating financial crime in South Korea.</p>
+<p>Another research example uses GWR analysis to examine the relationship between crime and social economic factors in the Chicago neighbourhood. The researcher found that the relationship between poverty and crime varied across different neighbourhoods. With poverty having a stronger effect on crime in certain areas.</p>
+<p>They use the Spatial Durbin Model to define influences of neighbours and find significant association between neighbourhood social capital and crime victimisation. We believe that this can be applied to our project as we can find the null association between neighbourhood socio-economic factor and crime.</p>
+<p><u><strong>Kernel Density Estimation of Crime in India</strong></u></p>
+<p>The researchers visualised the crime hotspots using the Kernel Density Estimation and were able to pinpoint districts with a high concentration of crime. It was also shown that bandwidth influences the Kernel Density estimations.</p>
+<p>We can consider doing Kernel Density estimation in our project to identify the key hotspots in Seoul. This may provide insights as to what variables that can be considered that may be specific to a particular district.&nbsp;</p>
 </section>
 <section id="story-board" class="level1">
 <h1><u><em>Story Board</em></u></h1>
+<ol type="1">
+<li>EDA &amp; DATA TABLE</li>
+</ol>
+<p><img src="images/EDA_and_DataTable.png" class="img-fluid"></p>
+<ol start="2" type="1">
+<li>GWR Model</li>
+</ol>
+<p><img src="images/GWR_model.png" class="img-fluid"></p>
 </section>
 <section id="timeline" class="level1">
 <h1><u><em>Timeline</em></u></h1>
+<p><img src="images/Timeline.png" class="img-fluid"></p>
 </section>
 <section id="references" class="level1">
 <h1><u><em>References</em></u></h1>
+<p><a href="https://www.researchgate.net/publication/254312619_Determinants_of_Crime_Incidence_in_Korea_A_Mixed_GWR_Approach" class="uri">https://www.researchgate.net/publication/254312619_Determinants_of_Crime_Incidence_in_Korea_A_Mixed_GWR_Approach</a>&nbsp;</p>
+<p><a href="https://www.sciencedirect.com/science/article/abs/pii/S027795361200593X" class="uri">https://www.sciencedirect.com/science/article/abs/pii/S027795361200593X</a>&nbsp;</p>
+<p>https://www.researchgate.net/profile/Prathap-Rudra-Boppuru/publication/339068025_Geospatial_Crime_Analysis_to_Determine_Crime_Density_Using_Kernel_Density_Estimation_for_the_Indian_Context/links/6020bf97299bf1cc26ae8223/Geospatial-Crime-Analysis-to-Determine-Crime-Density-Using-Kernel-Density-Estimation-for-the-Indian-Context.pdf</p>
 
 
 </section>
