@@ -30,7 +30,7 @@ residence <- st_read(dsn = "data_final/seoul_residential",
                      layer = "seoul_residential") %>%
   st_transform(crs = 5179)
 road <- st_read(dsn="data_final/seoul_roads",
-                layer = "seoul_roads")%>%
+                layer = "seoul_roads_v2")%>%
   st_transform(crs = 5179)
 ```
 
@@ -78,14 +78,14 @@ seoul_pop <- seoul %>%
              by = "name_en") 
 ```
 
-```{r}
+```{r, eval = FALSE}
 st_write(seoul_pop,
          dsn = "data_final",
          layer = "seoul_pop",
          driver = "ESRI Shapefile")
 ```
 
-```{r}
+```{r, eval = FALSE}
 seoul_pop <- st_read(dsn = "data_final/",
                      layer = "seoul_pop")
 ```
@@ -121,9 +121,7 @@ pacman::p_load(sf, spNetwork)
 
 ```{r}
 tmap_mode("view")
-tm_shape(seoul_pop) +
-  tm_polygons() +
-tm_shape(road) +
+tm_shape(roads_by_gwanak) +
   tm_lines()
 ```
 
@@ -133,8 +131,23 @@ hospital_by_gu <- st_intersection(hospitals, seoul)
 residence_by_gu <- st_intersection(residence, seoul)
 ```
 
+Ensure datasets are in the right format for NKDE
+
 ```{r}
-roads_by_gwanak <- roads_by_gu %>%
+hospital_by_gu <- st_centroid(hospital_by_gu)
+residence_by_gu <- st_centroid(residence_by_gu)
+```
+
+```{r}
+if ("MULTILINESTRING" %in% st_geometry_type(roads_by_gu)){
+  converted <- st_cast(roads_by_gu[which(st_geometry_type(roads_by_gu) == "MULTILINESTRING"),], "LINESTRING")
+  linestring <- roads_by_gu[which(st_geometry_type(roads_by_gu) == "LINESTRING"),]
+  roads_by_gu_new<- rbind(linestring, converted)
+}
+```
+
+```{r}
+roads_by_gwanak <- roads_by_gu_new %>%
   filter(name_en == "Gwanak-gu")
 hospital_by_gwanak <- hospital_by_gu %>%
   filter(name_en == "Gwanak-gu")
@@ -149,10 +162,93 @@ tm_shape(roads_by_gwanak) +
   tm_shape(hospital_by_gwanak) +
   tm_dots(col = "green") +
   tm_shape(residence_by_gwanak) +
-  tm_polygons(col = "red")
+  tm_dots(col = "red")
 
 ```
 
+## Preparing lixels object
+
 ```{r}
+# Filter out only LINESTRING geometries
+lixels <- lixelize_lines(roads_by_gwanak, 700, mindist = 350)
+
+```
+
+## Generating line centre points
+
+```{r}
+samples <- lines_center(lixels)
+```
+
+## Performing NetKDE
+
+```{r}
+hospital_by_gwanak_sp <- as_Spatial(hospital_by_gwanak)
+```
+
+```{r}
+densities <- nkde(roads_by_gwanak, 
+                  events = hospital_by_gwanak,
+                  w = rep(1,nrow(hospital_by_gwanak)),
+                  samples = samples,
+                  kernel_name = "quartic",
+                  bw = 300, 
+                  div= "bw", 
+                  adaptive = FALSE,
+                  method = "continuous", 
+                  digits = 1, 
+                  tol = 1,
+                  grid_shape = c(1,1), 
+                  max_depth = 8,
+                  agg = 20, #we aggregate events within a 5m radius (faster calculation)
+                  sparse = TRUE,
+                  verbose = FALSE)
+```
+
+## Visualising NETKDE
+
+```{r}
+samples$density <- densities*1000
+lixels$density <- densities*1000
+```
+
+```{r}
+tmap_mode('view')
+tm_shape(lixels)+
+  tm_lines(col="density")
+```
+
+## Network constrained G and K function
+
+**Ho: The observed spatial point events (i.e distribution of childcare centres) are uniformly distributed over a street network in Punggol Planning Area.**
+
+```{r}
+kfun_hospital <- kfunctions(roads_by_gwanak, 
+                             hospital_by_gwanak,
+                             start = 0, 
+                             end = 30, 
+                             step = 1, 
+                             width = 50, 
+                             nsim = 50, 
+                             resolution = 50,
+                             verbose = FALSE, 
+                             conf_int = 0.05)
+```
+
+```{r}
+kfun_hospital$plotk
+```
+
+### Geographical accessibility
+
+### Using Euclidean Distance
+
+```{r}
+library(sf)
+library(rgeos)
+
+distance_matrix <- as.matrix(st_distance(residence_by_gwanak, hospital_by_gwanak))
+
+dist_matrix<- matrix(distance_matrix)
 
 ```
