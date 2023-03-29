@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>IS415-GAA-Project - Geographical Weighted Regression on Seoul’s financial crimes</title>
+<title>IS415-GAA-Project - Geographical Weighted Regression on Seoul’s Healthcare Facilities</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -110,13 +110,12 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#project-motivation" id="toc-project-motivation" class="nav-link active" data-scroll-target="#project-motivation"><u><em>Project Motivation</em></u></a></li>
+  <li><a href="#abstract" id="toc-abstract" class="nav-link active" data-scroll-target="#abstract"><u><em>Abstract</em></u></a></li>
+  <li><a href="#project-statement" id="toc-project-statement" class="nav-link" data-scroll-target="#project-statement"><u><em>Project Statement</em></u></a></li>
   <li><a href="#projects-objective" id="toc-projects-objective" class="nav-link" data-scroll-target="#projects-objective"><u><em>Projects Objective</em></u></a></li>
   <li><a href="#data" id="toc-data" class="nav-link" data-scroll-target="#data"><u><em>Data</em></u></a></li>
-  <li><a href="#literature-review" id="toc-literature-review" class="nav-link" data-scroll-target="#literature-review"><u><em>Literature Review</em></u></a></li>
-  <li><a href="#story-board" id="toc-story-board" class="nav-link" data-scroll-target="#story-board"><u><em>Story Board</em></u></a></li>
+  <li><a href="#methology" id="toc-methology" class="nav-link" data-scroll-target="#methology"><u><em>Methology</em></u></a></li>
   <li><a href="#timeline" id="toc-timeline" class="nav-link" data-scroll-target="#timeline"><u><em>Timeline</em></u></a></li>
-  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references"><u><em>References</em></u></a></li>
   </ul>
 </nav>
     </div>
@@ -125,7 +124,7 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Geographical Weighted Regression on Seoul’s financial crimes</h1>
+<h1 class="title">Geographical Weighted Regression on Seoul’s Healthcare Facilities</h1>
 </div>
 
 
@@ -140,72 +139,82 @@ ul.task-list li input[type="checkbox"] {
 
 </header>
 
-<section id="project-motivation" class="level1">
-<h1><u><em>Project Motivation</em></u></h1>
-<p>Financial crimes around the world have been on the rise. In particular, Seoul has maintained its <a href="https://www-statista-com.libproxy.smu.edu.sg/statistics/1249396/south-korea-crime-rate-by-region/?locale=en">crime rates</a> to be relatively consistent with its other regions despite having the <a href="https://www-statista-com.libproxy.smu.edu.sg/statistics/1112322/south-korea-population-density-by-province/">highest population density</a> in South Korea. One possible reason could be because the <a href="https://www-statista-com.libproxy.smu.edu.sg/statistics/1290877/south-korea-number-of-police-officers-in-seoul/">number of police officers</a> in Seoul have been increasing. In 2011, there were approximately 24990 police officers and by 2016, the number of police officers amounted to 27350. However, this is just an assumption, which is why to test this assumption, it brings us to our project objective.</p>
+<section id="abstract" class="level1">
+<h1><u><em>Abstract</em></u></h1>
+<p>The accessibility of healthcare facilities like hospitals are crucial to ensure the equal access of&nbsp;medical services to all individuals, regardless of their socio-economic background or geographical location. In South Korea, recent evidence suggests that there may be disparities in access to hospitals, with certain populations and regions experiencing higher difficulties in obtaining necessary healthcare services. This study aims to find out the regions with limited access to&nbsp;hospitals in South Korea. By analyzing the spatial data, we seek to identify patterns and trends in hospital accessibility. Our findings will provide valuable insights for policymakers, healthcare providers, and other stakeholders to address this pressing issue and improve the overall quality of healthcare in South Korea.&nbsp;</p>
+</section>
+<section id="project-statement" class="level1">
+<h1><u><em>Project Statement</em></u></h1>
+<p>Despite the advancements in South Korea’s healthcare system, a significant proportion of the population may still experience challenges in accessing hospitals and receiving timely medical care. Limited accessibility to hospitals can lead to delays in diagnosis and treatment, exacerbate health disparities among socio-economic groups, and negatively impact the overall health outcomes of the population. The factors contributing to this issue may include uneven distribution of healthcare facilities, inadequate public transportation networks, and socio-economic barriers. We will be analyzing the gaps in the location of the healthcare facilities to see if South Korean residents living in Seoul have adequate accessibility to healthcare services. &nbsp;</p>
 </section>
 <section id="projects-objective" class="level1">
 <h1><u><em>Projects Objective</em></u></h1>
-<p>The objective of this project is to allow the end-user to use our model in assessing what are the key factors that influence financial crimes and how much these factors explain the high/low financial crime rates in the country of their choice. The results of this model will hopefully provide insights on how to reduce the occurrence of financial crimes to the user. By using Seoul, we hope to showcase how our app operates so that our model can be applied to your selected country.</p>
+<p>The objective of this project is to allow the end-user to use our model to identify areas with low healthcare accessibility.&nbsp;This app will also show the difference between the conventional and Network Constrained Spatial Point Analysis. Hence, the app will not only provide insights into healthcare accessibility but also serve as an educational tool on the different types of Spatial Point analysis.&nbsp;</p>
+<p>App Functions:&nbsp;</p>
+<ol type="1">
+<li><strong>Spatial Point Pattern Analysis</strong>
+<ul>
+<li><p>Visualisation of variable points&nbsp;</p></li>
+<li><p>Kernel Density Plots&nbsp;</p></li>
+<li><p>G, K, L Function plots and analysis&nbsp;</p></li>
+</ul></li>
+</ol>
+<!-- -->
+<ol start="2" type="1">
+<li><p><strong>Co-Location Analysis</strong></p>
+<ul>
+<li><p>Visualisation of Local Co-Location Points&nbsp;</p></li>
+<li><p>Co-Location Statistical interpretation&nbsp;</p></li>
+</ul></li>
+</ol>
+<!-- -->
+<ol start="3" type="1">
+<li><p><strong>Network Constrained Spatial Point Analysis</strong></p>
+<ul>
+<li><p>Visualisation of points and network&nbsp;</p></li>
+<li><p>Visualisation of NetKDE&nbsp;</p></li>
+<li><p>Network Constrained G- and K-Function Analysis&nbsp;</p></li>
+</ul></li>
+</ol>
+<p>The application will provide 3 levels of analysis, spatial points analysis, network constrained Spatial Point Pattern Analysis and Co-location analysis. The first analysis will showcase the conventional spatial point pattern analysis and draw insights from the findings. The second analysis will showcase the network constrained Spatial point pattern analysis and lastly co-location analysis can help us to understand the spatial patterns of hospitals in Seoul and identify areas where they may be gaps in healthcare service provision.&nbsp;</p>
+<p>By using South Korea and Seoul in particular, we hope to showcase how our app operates such that our model can be applied to your selected country. &nbsp;</p>
 </section>
 <section id="data" class="level1">
 <h1><u><em>Data</em></u></h1>
 <ul>
-<li><p>Crime data:</p>
-<ul>
-<li><a href="https://kosis.kr/statHtml/statHtml.do?orgId=135&amp;tblId=TX_13501_A048&amp;vw_cd=MT_ETITLE&amp;list_id=C_9&amp;scrId=&amp;language=en&amp;seqNo=&amp;lang_mode=en&amp;obj_var_id=&amp;itm_id=&amp;conn_path=MT_ETITLE&amp;path=%252Feng%252FstatisticsList%252FstatisticsListIndex.do" class="uri">https://kosis.kr/statHtml/statHtml.do?orgId=135&amp;tblId=TX_13501_A048&amp;vw_cd=MT_ETITLE&amp;list_id=C_9&amp;scrId=&amp;language=en&amp;seqNo=&amp;lang_mode=en&amp;obj_var_id=&amp;itm_id=&amp;conn_path=MT_ETITLE&amp;path=%252Feng%252FstatisticsList%252FstatisticsListIndex.do</a>&nbsp;</li>
-</ul></li>
-<li><p>Geospatial Data&nbsp;</p>
-<ul>
-<li><a href="https://gadm.org/download_country_v2.html#google_vignette" class="uri">https://gadm.org/download_country_v2.html#google_vignette</a></li>
-</ul></li>
-<li><p>Population</p>
-<ul>
-<li><a href="https://data.humdata.org/dataset/kontur-boundaries-korea-republic-of" class="uri">https://data.humdata.org/dataset/kontur-boundaries-korea-republic-of</a>&nbsp;</li>
-</ul></li>
-<li><p>Police post locations</p>
-<ul>
-<li><a href="http://download.geofabrik.de/asia/south-korea.html" class="uri">http://download.geofabrik.de/asia/south-korea.html</a>&nbsp;</li>
-</ul></li>
-<li><p>Unemployment</p>
-<ul>
-<li>Data: <a href="https://kosis.kr/statHtml/statHtml.do?orgId=101&amp;tblId=DT_1DA7107S&amp;vw_cd=MT_ETITLE&amp;list_id=B15&amp;scrId=&amp;language=en&amp;seqNo=&amp;lang_mode=en&amp;obj_var_id=&amp;itm_id=&amp;conn_path=MT_ETITLE&amp;path=%252Feng%252FstatisticsList%252FstatisticsListIndex.do" class="uri">https://kosis.kr/statHtml/statHtml.do?orgId=101&amp;tblId=DT_1DA7107S&amp;vw_cd=MT_ETITLE&amp;list_id=B15&amp;scrId=&amp;language=en&amp;seqNo=&amp;lang_mode=en&amp;obj_var_id=&amp;itm_id=&amp;conn_path=MT_ETITLE&amp;path=%252Feng%252FstatisticsList%252FstatisticsListIndex.do</a></li>
-</ul></li>
+<li><p><a href="https://data.humdata.org/dataset/kontur-boundaries-korea-republic-of">South Korea level-three administrative boundaries</a> &nbsp;</p></li>
+<li><p><a href="https://kosis.kr/statHtml/statHtml.do?orgId=101&amp;tblId=DT_1IN1502&amp;conn_path=I2&amp;language=en">Population data</a> &nbsp;</p></li>
+<li><p><a href="http://download.geofabrik.de/asia/south-korea.html">Hospital / Clinics</a> &nbsp;</p></li>
+<li><p><a href="http://download.geofabrik.de/asia/south-korea.html">Road network</a>&nbsp;</p></li>
 </ul>
+<p>The purpose of this review aims to explore the potential of Spatial Point Pattern Analysis for understanding the spatial patterns of how healthcare facilities are placed in South Korea with respect to their accessibilities. &nbsp;</p>
+<p>Several Korean researchers analyzed the accessibility of welfare facilities for elderly in Daejeon in consideration of their public transport network. In their research, several tools were used such as thematic maps that illustrated bus stop location, bus networks, train networks. They have also calculated distance and time to measure spatial accessibility and visualized their findings. Overall, the study found that improving public transport accessibility would increase spatial equity of welfare services for elderly people.&nbsp;</p>
+<p>With many countries experiencing an aging population, it is important that such facilities remain accessible to all. Hence, we can apply Spatial Point Pattern Analysis to analyze the spatial patterns of healthcare facilities in consideration of their accessibility. This is to understand the problem statement better and suggest recommendations.&nbsp;</p>
 </section>
-<section id="literature-review" class="level1">
-<h1><u><em>Literature Review</em></u></h1>
-<p>The purpose of this review aims to explore the potential of Geographically Weighted Regression (GWR) analysis for understanding the spatial patterns of financial crime in South Korea.</p>
-<p>A Korean researcher used GWR analysis to examine the relationship between crime and socio-economic factors in Seoul, South Korea. The study found that the spatial patterns of crime vary across different regions of the city and that the relationship between crime and socio-economic factors is also spatially variable. The models they use include the Spatial Error Model, Multiple Regression, Bayesian Hierarchical Mode and many more, to compare the different independent variables.</p>
-<p>GWR analysis can be applied to financial crime in South Korea to identify the spatial patterns of different types of financial crime and to explore the relationship between financial crime and socio-economic factors at the local level.</p>
-<p>For example, the methodology can be used to examine the relationship between financial crime and factors such as income, education, and unemployment at the local level. This can provide insights into the underlying drivers of financial crime in different regions of South Korea and can inform the development of more effective policies for preventing and combating financial crime.</p>
-<p>Thus, GWR analysis is a promising methodology for understanding the spatial patterns of financial crime in South Korea. While there is limited research on the application of GWR analysis to financial crime in South Korea, further research in this area could contribute to the development of more effective strategies for preventing and combating financial crime in South Korea.</p>
-<p>Another research example uses GWR analysis to examine the relationship between crime and social economic factors in the Chicago neighbourhood. The researcher found that the relationship between poverty and crime varied across different neighbourhoods. With poverty having a stronger effect on crime in certain areas.</p>
-<p>They use the Spatial Durbin Model to define influences of neighbours and find significant association between neighbourhood social capital and crime victimisation. We believe that this can be applied to our project as we can find the null association between neighbourhood socio-economic factor and crime.</p>
-<p><u><strong>Kernel Density Estimation of Crime in India</strong></u></p>
-<p>The researchers visualised the crime hotspots using the Kernel Density Estimation and were able to pinpoint districts with a high concentration of crime. It was also shown that bandwidth influences the Kernel Density estimations.</p>
-<p>We can consider doing Kernel Density estimation in our project to identify the key hotspots in Seoul. This may provide insights as to what variables that can be considered that may be specific to a particular district.&nbsp;</p>
-</section>
-<section id="story-board" class="level1">
-<h1><u><em>Story Board</em></u></h1>
+<section id="methology" class="level1">
+<h1><u><em>Methology</em></u></h1>
 <ol type="1">
-<li>EDA &amp; DATA TABLE</li>
+<li><p>Spatial point patterns analysis (SPPA)&nbsp;</p>
+<ul>
+<li><p>1st Order&nbsp;</p></li>
+<li><p>2nd Order&nbsp;</p></li>
+</ul></li>
 </ol>
-<p><img src="images/EDA_and_DataTable.png" class="img-fluid"></p>
+<!-- -->
 <ol start="2" type="1">
-<li>GWR Model</li>
+<li>Network Constraint Spatial Analysis&nbsp;</li>
 </ol>
-<p><img src="images/GWR_model.png" class="img-fluid"></p>
+<!-- -->
+<ol start="3" type="1">
+<li>Co-location Analysis&nbsp;</li>
+</ol>
+<p>This project examines the accessibility of&nbsp;residents in Seoul Sub district to healthcare facilities.&nbsp; We collected data including geospatial forms, location, routes, and population in sub district of Seoul. By using spatial point pattern analysis would help us to identify any patterns or clusters in the distribution of hospital in the city. We would explore the use of K, G and L functions to measure the degree of clustering in the hospital location. From the results of this, we could suggest certain areas of the district if it is underserved or overserved by healthcare facilities.&nbsp;</p>
+<p>Next, we will be using Network constrained spatial point pattern analysis to further analyze spatial point events that occur on the network. We can also identify the hotspot or the clusters of it. The function we will be exploring would be NetKDE, it combines kernel density estimation with network distance metrics to estimate the intensity of point events or objects along the network. It takes into account the distance and connectivity between different points on a network&nbsp;when analyzing spatial patterns. If there are areas of the area with low hospital/clinic accessibility, this could suggest that additional healthcare facilities are needed in those areas to improve access to medical care.&nbsp;</p>
+<p>Lastly, co-location analysis is a technique used to analyze the spatial relationship between different features in a particular area. It can be used to determine the proximity and clustering pattern of hospitals/clinics in different areas. We can find out the nearest neighboring between each point of interest that we want to find out. Next, we can show areas of high and low hospital density by using heatmaps. This can help to identify areas if are more or fewer hospitals/clinics and can have a better planning decision in the future. &nbsp;</p>
 </section>
 <section id="timeline" class="level1">
 <h1><u><em>Timeline</em></u></h1>
-<p><img src="images/Timeline.png" class="img-fluid"></p>
-</section>
-<section id="references" class="level1">
-<h1><u><em>References</em></u></h1>
-<p><a href="https://www.researchgate.net/publication/254312619_Determinants_of_Crime_Incidence_in_Korea_A_Mixed_GWR_Approach" class="uri">https://www.researchgate.net/publication/254312619_Determinants_of_Crime_Incidence_in_Korea_A_Mixed_GWR_Approach</a>&nbsp;</p>
-<p><a href="https://www.sciencedirect.com/science/article/abs/pii/S027795361200593X" class="uri">https://www.sciencedirect.com/science/article/abs/pii/S027795361200593X</a>&nbsp;</p>
-<p>https://www.researchgate.net/profile/Prathap-Rudra-Boppuru/publication/339068025_Geospatial_Crime_Analysis_to_Determine_Crime_Density_Using_Kernel_Density_Estimation_for_the_Indian_Context/links/6020bf97299bf1cc26ae8223/Geospatial-Crime-Analysis-to-Determine-Crime-Density-Using-Kernel-Density-Estimation-for-the-Indian-Context.pdf</p>
+<p><img src="images/Timeline.png" class="img-fluid" width="621"></p>
 
 
 </section>

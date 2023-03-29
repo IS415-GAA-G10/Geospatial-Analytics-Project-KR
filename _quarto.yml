@@ -16,7 +16,7 @@ website:
 
 format:
   html:
-    theme: journal
+    theme: Sandstone
     css: styles.css
     toc: true
 
