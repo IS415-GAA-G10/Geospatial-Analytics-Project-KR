@@ -1,0 +1,158 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+# Load packages in
+
+```{r}
+pacman::p_load(sf, readr, tidyverse, tmap)
+```
+
+# Load Data in
+
+## Geospatial Data
+
+```{r}
+seoul <- st_read(dsn = "data_final/seoul_adm2",
+                 layer= "seoul_adm2") %>%
+  st_transform(crs = 5179)
+```
+
+```{r}
+clinics <- st_read(dsn = "data_final/seoul_clinics",
+                   layer = "seoul_clinics") %>%
+  st_transform(crs = 5179)
+hospitals <- st_read(dsn = "data_final/seoul_hospitals",
+                     layer = "seoul_hospitals") %>%
+  st_transform(crs = 5179)
+residence <- st_read(dsn = "data_final/seoul_residential",
+                     layer = "seoul_residential") %>%
+  st_transform(crs = 5179)
+road <- st_read(dsn="data_final/seoul_roads",
+                layer = "seoul_roads")%>%
+  st_transform(crs = 5179)
+```
+
+## Select wanted datasets
+
+```{r}
+clinic <- clinics %>%
+  select(1,3)
+hospitals <- hospitals %>%
+  select(1,3)
+residence <- residence %>%
+  select(1,3)
+road <- road %>%
+  select(1,3)
+```
+
+## Aspatial Data
+
+```{r}
+population <- read_csv("data_final/population_seoul.csv")
+```
+
+# Data Wrangling
+
+## Geospatial
+
+```{r}
+pop <- population %>%
+  select(1,2) %>%
+  mutate(Elderly_pop = round(0.1758*`Total population (Person)`,0)) %>%
+  rename(name_en =`By administrative divisions(eup, myeon, dong)`)
+```
+
+```{r}
+Gu <- pop$name_en
+
+seoul <- seoul %>%
+  filter(name_en %in% Gu) %>%
+  select(name_en)
+```
+
+```{r}
+seoul_pop <- seoul %>%
+  left_join(pop,
+             by = "name_en") 
+```
+
+```{r}
+st_write(seoul_pop,
+         dsn = "data_final",
+         layer = "seoul_pop",
+         driver = "ESRI Shapefile")
+```
+
+```{r}
+seoul_pop <- st_read(dsn = "data_final/",
+                     layer = "seoul_pop")
+```
+
+```{r}
+tm_shape(seoul_pop)+
+  tm_fill("Elderly_pop", 
+          style = "quantile", 
+          palette = "Greens",
+          title = "Elderly Population") +
+  tm_layout(main.title = "Elderly Population",
+            main.title.position = "center",
+            main.title.size = 1.2,
+            legend.height = 0.45, 
+            legend.width = 0.35,
+            frame = TRUE) +
+  tm_borders(alpha = 0.5) +
+  tm_compass(type="8star", size = 2) +
+  tm_scale_bar() +
+  tm_grid(alpha =0.2) +
+  tm_credits("Source: Data.korea", 
+             position = c("left", "bottom")) +
+  tmap_style("classic")
+```
+
+# Start of Network Constrained Spatial Point
+
+## Packages needed
+
+```{r}
+pacman::p_load(sf, spNetwork)
+```
+
+```{r}
+tmap_mode("view")
+tm_shape(seoul_pop) +
+  tm_polygons() +
+tm_shape(road) +
+  tm_lines()
+```
+
+```{r}
+roads_by_gu <- st_intersection(road, seoul)
+hospital_by_gu <- st_intersection(hospitals, seoul)
+residence_by_gu <- st_intersection(residence, seoul)
+```
+
+```{r}
+roads_by_gwanak <- roads_by_gu %>%
+  filter(name_en == "Gwanak-gu")
+hospital_by_gwanak <- hospital_by_gu %>%
+  filter(name_en == "Gwanak-gu")
+residence_by_gwanak <- residence_by_gu %>%
+  filter(name_en == "Gwanak-gu")
+```
+
+```{r}
+tmap_mode("view")
+tm_shape(roads_by_gwanak) +
+  tm_lines() +
+  tm_shape(hospital_by_gwanak) +
+  tm_dots(col = "green") +
+  tm_shape(residence_by_gwanak) +
+  tm_polygons(col = "red")
+
+```
+
+```{r}
+
+```
