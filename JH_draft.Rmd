@@ -120,12 +120,6 @@ pacman::p_load(sf, spNetwork)
 ```
 
 ```{r}
-tmap_mode("view")
-tm_shape(roads_by_gwanak) +
-  tm_lines()
-```
-
-```{r}
 roads_by_gu <- st_intersection(road, seoul)
 hospital_by_gu <- st_intersection(hospitals, seoul)
 residence_by_gu <- st_intersection(residence, seoul)
@@ -163,7 +157,6 @@ tm_shape(roads_by_gwanak) +
   tm_dots(col = "green") +
   tm_shape(residence_by_gwanak) +
   tm_dots(col = "red")
-
 ```
 
 ## Preparing lixels object
@@ -246,9 +239,61 @@ kfun_hospital$plotk
 ```{r}
 library(sf)
 library(rgeos)
+library(od)
 
-distance_matrix <- as.matrix(st_distance(residence_by_gwanak, hospital_by_gwanak))
 
-dist_matrix<- matrix(distance_matrix)
+```
 
+# Dong level![](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAaCAYAAADFTB7LAAAAcElEQVR4Xu3OwQmAQAxE0bClWYCW5N06tM6V2YPg5CjoF/JhLoHAi6iqn9eOefUbqrYvHY0cQDLyAlKRNyARmYA0ZMLRkAlGQyaU72tkAtlim7r/vJqDUDjlKBROOQyFU2icQuMUGqfQuBEaV1XPOwEx96nYACK8+wAAAABJRU5ErkJggg== "Run Current Chunk")
+
+```{r}
+ihwa <- seoul %>%
+  filter(name_en == "Ihwa-dong")
+```
+
+```{r}
+hospital_ihwa <- st_intersection(hospitals, ihwa)
+roads_ihwa <- st_intersection(road, ihwa)
+residence_ihwa <- st_intersection(residence, ihwa)
+```
+
+```{r}
+if ("MULTILINESTRING" %in% st_geometry_type(roads_ihwa)){
+  converted <- st_cast(roads_ihwa[which(st_geometry_type(roads_ihwa) == "MULTILINESTRING"),], "LINESTRING")
+  linestring <- roads_ihwa[which(st_geometry_type(roads_ihwa) == "LINESTRING"),]
+  roads_ihwa_line<- rbind(linestring, converted)}
+```
+
+```{r}
+Roads_ihwa_sp <- as_Spatial(roads_ihwa_line)
+```
+
+```{r}
+# Filter out only LINESTRING geometries
+lixels <- lixelize_lines(roads_ihwa_sp, 700, mindist = 350)
+hospital_by_ihwa_sp <- as_Spatial(hospital_ihwa)
+
+densities <- nkde(roads_ihwa, 
+                  events = hospital_ihwa,
+                  w = rep(1,nrow(hospital_ihwa)),
+                  samples = samples,
+                  kernel_name = "quartic",
+                  bw = 300, 
+                  div= "bw", 
+                  adaptive = FALSE,
+                  method = "continuous", 
+                  digits = 1, 
+                  tol = 1,
+                  grid_shape = c(1,1), 
+                  max_depth = 8,
+                  agg = 20, #we aggregate events within a 5m radius (faster calculation)
+                  sparse = TRUE,
+                  verbose = FALSE)
+kfun_hospital$plotk
+```
+
+```{r}
+tmap_mode('view')
+tm_shape(lixels)+
+  tm_lines(col="density")
 ```
