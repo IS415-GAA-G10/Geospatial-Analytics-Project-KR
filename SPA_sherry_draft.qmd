@@ -441,7 +441,7 @@ L_clinic.csr <- envelope(clinic_seoul, Lest, nsim = 39, rank = 1, glocal=TRUE)
 plot(L_clinic.csr, . - r ~ r, xlab="d", ylab="L(d)-r")
 ```
 
-## L function for hospitial 
+## L function for hospital 
 
 ```{r}
 L_hospital = Lest(hospital_seoul, correction = "Ripley")
