@@ -399,7 +399,7 @@ k function calculates for a radius r the proportion of cells with a value below 
 
 ```{r}
 K_clinic = Kest(clinic_seoul, correction = "Ripley")
-plot(K_ck, . -r ~ r, ylab= "K(d)-r", xlab = "d(m)")
+plot(K_clinic, . -r ~ r, ylab= "K(d)-r", xlab = "d(m)")
 ```
 
 ```{r}
@@ -413,18 +413,46 @@ plot(K_clinic.csr, . - r ~ r, xlab="d", ylab="K(d)-r")
 Conclusion: The observed K(r) is far above the K(theo) as well as the envelope - indicating that clinics in seoul area are clustered. Hence, we reject the null hypothesis that clinic in the seoul area are randomly distributed at 99% confident interval.
 
 ```{r}
-K_hospital = Kest(hospitals_seoul, correction = "Ripley")
-plot(K_ck, . -r ~ r, ylab= "K(d)-r", xlab = "d(m)")
+K_hospital = Kest(hospital_seoul, correction = "Ripley")
+plot(K_hospital, . -r ~ r, ylab= "K(d)-r", xlab = "d(m)")
 ```
 
 ```{r}
-K_hostpital.csr <- envelope(hospitals_seoul, Kest, nsim = 39, rank = 1, glocal=TRUE)
+K_hospital.csr <- envelope(hospital_seoul, Kest, nsim = 39, rank = 1, glocal=TRUE)
 ```
 
 ```{r}
-plot(K_hopital.csr, . - r ~ r, xlab="d", ylab="K(d)-r")
+plot(K_hospital.csr, . - r ~ r, xlab="d", ylab="K(d)-r")
 ```
 
--   do k function for hospital
+## L function for clinic
 
--   L function for clinic and hospital
+```{r}
+L_clinic = Lest(clinic_seoul, correction = "Ripley")
+plot(L_clinic, . -r ~ r, 
+     ylab= "L(d)-r", xlab = "d(m)")
+```
+
+```{r}
+L_clinic.csr <- envelope(clinic_seoul, Lest, nsim = 39, rank = 1, glocal=TRUE)
+```
+
+```{r}
+plot(L_clinic.csr, . - r ~ r, xlab="d", ylab="L(d)-r")
+```
+
+## L function for hospitial 
+
+```{r}
+L_hospital = Lest(hospital_seoul, correction = "Ripley")
+plot(L_clinic, . -r ~ r, 
+     ylab= "L(d)-r", xlab = "d(m)")
+```
+
+```{r}
+L_hospital.csr <- envelope(hospital_seoul, Lest, nsim = 39, rank = 1, glocal=TRUE)
+```
+
+```{r}
+plot(L_hospital.csr, . - r ~ r, xlab="d", ylab="L(d)-r")
+```
