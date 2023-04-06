@@ -65,10 +65,8 @@ pop <- population %>%
 ```
 
 ```{r}
-Gu <- pop$name_en
-
-seoul <- seoul %>%
-  filter(name_en %in% Gu) %>%
+Ihwa <- seoul %>%
+  filter(name_en == "Gangnam-gu") %>%
   select(name_en)
 ```
 
@@ -120,22 +118,22 @@ pacman::p_load(sf, spNetwork)
 ```
 
 ```{r}
-roads_by_gu <- st_intersection(road, seoul)
-hospital_by_gu <- st_intersection(hospitals, seoul)
-residence_by_gu <- st_intersection(residence, seoul)
+R <- st_intersection(road, Ihwa)
+H <- st_intersection(hospitals, Ihwa)
+RE <- st_intersection(residence, Ihwa)
 ```
 
 Ensure datasets are in the right format for NKDE
 
 ```{r}
-hospital_by_gu <- st_centroid(hospital_by_gu)
-residence_by_gu <- st_centroid(residence_by_gu)
+H_P <- st_centroid(H)
+RE_P <- st_centroid(RE)
 ```
 
 ```{r}
-if ("MULTILINESTRING" %in% st_geometry_type(roads_by_gu)){
-  converted <- st_cast(roads_by_gu[which(st_geometry_type(roads_by_gu) == "MULTILINESTRING"),], "LINESTRING")
-  linestring <- roads_by_gu[which(st_geometry_type(roads_by_gu) == "LINESTRING"),]
+if ("MULTILINESTRING" %in% st_geometry_type(R)){
+  converted <- st_cast(R[which(st_geometry_type(R) == "MULTILINESTRING"),], "LINESTRING")
+  linestring <- R[which(st_geometry_type(R) == "LINESTRING"),]
   roads_by_gu_new<- rbind(linestring, converted)
 }
 ```
@@ -163,7 +161,7 @@ tm_shape(roads_by_gwanak) +
 
 ```{r}
 # Filter out only LINESTRING geometries
-lixels <- lixelize_lines(roads_by_gwanak, 700, mindist = 350)
+lixels <- lixelize_lines(roads_by_gu_new, 700, mindist = 350)
 
 ```
 
@@ -176,13 +174,13 @@ samples <- lines_center(lixels)
 ## Performing NetKDE
 
 ```{r}
-hospital_by_gwanak_sp <- as_Spatial(hospital_by_gwanak)
+hospital_by_gwanak_sp <- as_Spatial(H_P)
 ```
 
 ```{r}
-densities <- nkde(roads_by_gwanak, 
-                  events = hospital_by_gwanak,
-                  w = rep(1,nrow(hospital_by_gwanak)),
+densities <- nkde(roads_by_gu_new, 
+                  events = H_P,
+                  w = rep(1,nrow(H_P)),
                   samples = samples,
                   kernel_name = "quartic",
                   bw = 300, 
@@ -208,7 +206,11 @@ lixels$density <- densities*1000
 ```{r}
 tmap_mode('view')
 tm_shape(lixels)+
-  tm_lines(col="density")
+  tm_lines(col="density",
+           palette = "Reds") +
+tm_shape(H_P) +
+  tm_dots(col = "blue",
+          size =0.01)
 ```
 
 ## Network constrained G and K function
@@ -216,20 +218,38 @@ tm_shape(lixels)+
 **Ho: The observed spatial point events (i.e distribution of childcare centres) are uniformly distributed over a street network in Punggol Planning Area.**
 
 ```{r}
-kfun_hospital <- kfunctions(roads_by_gwanak, 
-                             hospital_by_gwanak,
-                             start = 0, 
-                             end = 30, 
-                             step = 1, 
-                             width = 50, 
-                             nsim = 50, 
-                             resolution = 50,
-                             verbose = FALSE, 
-                             conf_int = 0.05)
+kfun_hospital <- kfunctions(roads_by_gu_new, 
+                            H_P,
+                            start = 0, 
+                            end = 10000, 
+                            step = 50, 
+                            width = 50, 
+                            nsim = 50, 
+                            resolution = 50,
+                            verbose = FALSE,
+                            digits = 10,
+                            conf_int = 0.05)
 ```
 
 ```{r}
 kfun_hospital$plotk
+```
+
+```{r}
+crossfun_hospital<- cross_kfunctions(roads_by_gu_new, 
+                 RE_P, 
+                 H_P, 
+                 start= 0, 
+                 end = 2500, 
+                 step = 50, 
+                 width = 50, 
+                 nsim = 50,
+                 agg = 100,
+                 conf_int = 0.05)
+```
+
+```{r}
+crossfun_hospital$plotk
 ```
 
 ### Geographical accessibility
@@ -240,42 +260,40 @@ kfun_hospital$plotk
 library(sf)
 library(rgeos)
 library(od)
-
-
 ```
 
 # Dong level![](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAaCAYAAADFTB7LAAAAcElEQVR4Xu3OwQmAQAxE0bClWYCW5N06tM6V2YPg5CjoF/JhLoHAi6iqn9eOefUbqrYvHY0cQDLyAlKRNyARmYA0ZMLRkAlGQyaU72tkAtlim7r/vJqDUDjlKBROOQyFU2icQuMUGqfQuBEaV1XPOwEx96nYACK8+wAAAABJRU5ErkJggg== "Run Current Chunk")
 
 ```{r}
-ihwa <- seoul %>%
+H <- hospital_by_gu %>%
+  filter(name_en == "Ihwa-dong")
+R <- roads_by_gu %>%
+  filter(name_en == "Ihwa-dong")
+RE <- residence_by_gu %>%
   filter(name_en == "Ihwa-dong")
 ```
 
 ```{r}
-hospital_ihwa <- st_intersection(hospitals, ihwa)
-roads_ihwa <- st_intersection(road, ihwa)
-residence_ihwa <- st_intersection(residence, ihwa)
-```
-
-```{r}
-if ("MULTILINESTRING" %in% st_geometry_type(roads_ihwa)){
-  converted <- st_cast(roads_ihwa[which(st_geometry_type(roads_ihwa) == "MULTILINESTRING"),], "LINESTRING")
-  linestring <- roads_ihwa[which(st_geometry_type(roads_ihwa) == "LINESTRING"),]
+if ("MULTILINESTRING" %in% st_geometry_type(R)){
+  converted <- st_cast(R[which(st_geometry_type(R) == "MULTILINESTRING"),], "LINESTRING")
+  linestring <- R[which(st_geometry_type(R) == "LINESTRING"),]
   roads_ihwa_line<- rbind(linestring, converted)}
 ```
 
 ```{r}
-Roads_ihwa_sp <- as_Spatial(roads_ihwa_line)
+H_point <- st_centroid(H)
 ```
 
 ```{r}
 # Filter out only LINESTRING geometries
-lixels <- lixelize_lines(roads_ihwa_sp, 700, mindist = 350)
-hospital_by_ihwa_sp <- as_Spatial(hospital_ihwa)
+lixels <- lixelize_lines(roads_ihwa_line, 15000, mindist = 350)
+hospital_by_ihwa_sp <- as(H_point, "Spatial")
 
-densities <- nkde(roads_ihwa, 
-                  events = hospital_ihwa,
-                  w = rep(1,nrow(hospital_ihwa)),
+samples <- lines_center(lixels)
+
+densities <- nkde(roads_ihwa_line, 
+                  events = hospital_by_ihwa_sp,
+                  w = rep(1,nrow(hospital_by_ihwa_sp)),
                   samples = samples,
                   kernel_name = "quartic",
                   bw = 300, 
@@ -296,4 +314,21 @@ kfun_hospital$plotk
 tmap_mode('view')
 tm_shape(lixels)+
   tm_lines(col="density")
+```
+
+```{r}
+library(od)
+
+od <- points_to_od(RE_P, 
+                   pd = H_P,
+                   5179)
+od_matrix <- od_to_odmatrix(od)
+
+od_matrix <- od_matrix / 100000
+```
+
+```         
+```
+
+```         
 ```
