@@ -1,0 +1,458 @@
+---
+title: "SPA"
+format:
+ html:
+  toc: true
+  toc-location: right
+  number-depth: 3
+execute: 
+  message: false
+  warning: false
+editor: visual
+---
+
+# Import package
+
+```{r}
+pacman::p_load(maptools, sf, raster, spatstat, tmap, rgeos, rgdal,moments)
+```
+
+## Importing the spatial data
+
+```{r}
+seoul <- st_read(dsn = "data_final/seoul_adm2",
+                 layer= "seoul_adm2") %>%
+  st_transform(crs = 5179)
+```
+
+```{r}
+clinics <- st_read(dsn = "data_final/seoul_clinics",
+                   layer = "seoul_clinics") %>%
+  st_transform(crs = 5179)
+hospitals <- st_read(dsn = "data_final/seoul_hospitals",
+                     layer = "seoul_hospitals") %>%
+  st_transform(crs = 5179)
+residence <- st_read(dsn = "data_final/seoul_residential",
+                     layer = "seoul_residential") %>%
+  st_transform(crs = 5179)
+
+```
+
+the first version can be read in. I think is depend on the laptop dependencies.
+
+```{r}
+road <- st_read(dsn="data_final/seoul_roads",
+                layer = "seoul_roads")%>%
+  st_transform(crs = 5179)
+```
+
+Extracting GU
+
+```{r}
+gu <- list('Yeongdeungpo-gu', 'Yangcheon-gu','Seocho-gu','Gwanak-gu','	
+Guro-gu','Geumcheon-gu', 'Gangseo-gu','Dongjak-gu','Gangnam-gu','Yongsan-gu','Songpa-gu','Seongdong-gu','Seongbuk-gu','Seodaemun-gu','Nowon-gu','Mapo-gu','Jungnang-gu','Jung-gu','Jongno-gu','Gwangjin-gu','Gangdong-gu','Gangbuk-gu','Eunpyeong-gu','Dongdaemun-gu','Dobong-gu','Guro-gu')
+```
+
+```{r}
+seoul_gu <- seoul %>%
+  filter(name_en %in% gu)
+```
+
+```{r}
+qtm(seoul_gu)
+```
+
+```{r}
+tmap_mode("view")
+
+qtm(seoul_gu, 
+    fill = "population",
+        text= "name_en",
+    text.size = 0.8)
+```
+
+Converting sf data to sp spatial class
+
+```{r}
+clinics <- as_Spatial(clinics)
+hospitals <- as_Spatial(hospitals)
+```
+
+Since hospital is in polygon,convert them to points by creating the centroids of the polygon
+
+```{r}
+hospitals <- gCentroid(hospitals, byid = T)
+```
+
+convert to generic sp format
+
+```{r}
+clinics_sp <- as(clinics, "SpatialPoints")
+hospitals_sp <- as(hospitals, "SpatialPoints")
+```
+
+```{r}
+clinics_sp
+hospitals_sp
+```
+
+Converting generic sp to spatsats ppp format
+
+```{r}
+clinics_ppp <- as(clinics_sp, "ppp")
+hospitals_ppp <- as(hospitals_sp, "ppp")
+
+```
+
+check if there is any duplicates
+
+```{r}
+any(duplicated(clinics_ppp))
+any(duplicated(hospitals_ppp))
+```
+
+Create owin object, we have to extract the polygon instead of multipolygon
+
+```{r}
+seoul_outer <- st_read(dsn = "data_final/korea_polygon/korea",
+                 layer= "KOR_adm1") %>%
+  st_transform(crs = 5179) %>% filter(NAME_1 == "Seoul")
+```
+
+```{r}
+seoul <- as_Spatial(seoul_gu)
+seoul_sp <- as(seoul, "SpatialPolygons")
+seoul_owin <- as(seoul_sp, "owin") 
+```
+
+```{r}
+plot(seoul_owin)
+```
+
+Combining points and owin
+
+```{r}
+clinic_seoul = clinics_ppp[seoul_owin]
+hospital_seoul = hospitals_ppp[seoul_owin]
+```
+
+```{r}
+summary(clinic_seoul)
+```
+
+```{r}
+plot(clinic_seoul)
+```
+
+```{r}
+plot(hospital_seoul)
+```
+
+First-order spatial point pattern analysis
+
+rescale first
+
+```{r}
+clinic_seoul.km <- rescale(clinic_seoul, 1000, "km")
+```
+
+```{r}
+hospital_seoul.km <- rescale(hospital_seoul, 1000, "km")
+```
+
+## Choosing types of bandwidth
+
+Given a kernel, a smaller bandwidth tends to lead to an undersmoothed density estimate that may contain many spurious noises (i.e., peaks and valleys), and a larger bandwidth tends to result in an oversmoothed density estimate that may hide some interesting underlying structure. Therefore, choosing an optimal bandwidth for a dataset is important.
+
+```{r}
+bw.CvL(clinic_seoul.km)
+bw.scott(clinic_seoul.km)
+bw.ppl(clinic_seoul.km)
+bw.diggle(clinic_seoul.km)
+
+```
+
+```{r}
+bw.CvL(hospital_seoul.km)
+bw.scott(hospital_seoul.km)
+bw.ppl(hospital_seoul.km)
+bw.diggle(hospital_seoul.km)
+```
+
+```{r}
+par(mfrow=c(2,2))
+plot(density(clinic_seoul.km, 
+             sigma=bw.CvL, 
+             edge=TRUE, 
+             kernel="gaussian"), 
+     main="bw.CvL")
+plot(density(clinic_seoul.km, 
+             sigma=bw.scott, 
+             edge=TRUE, 
+             kernel="gaussian"), 
+     main="bw.scott")
+plot(density(clinic_seoul.km, 
+             sigma=bw.ppl, 
+             edge=TRUE, 
+             kernel="gaussian"), 
+     main="bw.ppl")
+plot(density(clinic_seoul.km, 
+             sigma=bw.diggle, 
+             edge=TRUE, 
+             kernel="gaussian"), 
+     main="bw.diggle")
+```
+
+```{r}
+par(mfrow=c(2,2))
+plot(density(hospital_seoul.km, 
+             sigma=bw.CvL, 
+             edge=TRUE, 
+             kernel="gaussian"), 
+     main="bw.CvL")
+plot(density(hospital_seoul.km, 
+             sigma=bw.scott, 
+             edge=TRUE, 
+             kernel="gaussian"), 
+     main="bw.scott")
+plot(density(hospital_seoul.km, 
+             sigma=bw.ppl, 
+             edge=TRUE, 
+             kernel="gaussian"), 
+     main="bw.ppl")
+plot(density(hospital_seoul.km, 
+             sigma=bw.diggle, 
+             edge=TRUE, 
+             kernel="gaussian"), 
+     main="bw.diggle")
+```
+
+Based on the above results, i decided to choose bw.ppl because it seems to be the most optimal among the rest of the bandwidth. Also, clinic data is small and it is useful for estimating gradual trend.
+
+## Comparing types of kernel
+
+```{r}
+par(mfrow=c(2,2))
+plot(density(clinic_seoul.km, 
+             sigma=bw.ppl, 
+             edge=TRUE, 
+             kernel="gaussian"), 
+     main="Gaussian")
+plot(density(clinic_seoul.km, 
+             sigma=bw.ppl, 
+             edge=TRUE, 
+             kernel="epanechnikov"), 
+     main="Epanechnikov")
+plot(density(clinic_seoul.km, 
+             sigma=bw.ppl, 
+             edge=TRUE, 
+             kernel="quartic"), 
+     main="Quartic")
+plot(density(clinic_seoul.km, 
+             sigma=bw.ppl, 
+             edge=TRUE, 
+             kernel="disc"), 
+     main="Disc")
+```
+
+```{r}
+par(mfrow=c(2,2))
+plot(density(hospital_seoul.km, 
+             sigma=bw.ppl, 
+             edge=TRUE, 
+             kernel="gaussian"), 
+     main="Gaussian")
+plot(density(hospital_seoul.km, 
+             sigma=bw.ppl, 
+             edge=TRUE, 
+             kernel="epanechnikov"), 
+     main="Epanechnikov")
+plot(density(hospital_seoul.km, 
+             sigma=bw.ppl, 
+             edge=TRUE, 
+             kernel="quartic"), 
+     main="Quartic")
+plot(density(hospital_seoul.km, 
+             sigma=bw.ppl, 
+             edge=TRUE, 
+             kernel="disc"), 
+     main="Disc")
+```
+
+we will use gaussian in this project because it is most recommended among others.
+
+```{r}
+kde_clinics_bw <- density(clinic_seoul.km,
+                              sigma=bw.ppl,
+                              edge=TRUE,
+                            kernel="gaussian") 
+plot(kde_clinics_bw)
+```
+
+```{r}
+kde_hospitals_bw <- density(hospital_seoul.km,
+                              sigma=bw.ppl,
+                              edge=TRUE,
+                            kernel="gaussian") 
+plot(kde_hospitals_bw)
+```
+
+Converting KDE output into grid object
+
+```{r}
+gridded_kde_clinic_bw <- as.SpatialGridDataFrame.im(kde_clinics_bw)
+spplot(gridded_kde_clinic_bw)
+```
+
+```{r}
+gridded_kde_hospital_bw <- as.SpatialGridDataFrame.im(kde_hospitals_bw)
+spplot(gridded_kde_hospital_bw)
+```
+
+Converting gridded output into raster
+
+```{r}
+kde_clinic_bw_raster <- raster(gridded_kde_clinic_bw)
+kde_hospital_bw_raster <- raster(gridded_kde_hospital_bw)
+```
+
+notice the crs is NA
+
+```{r}
+kde_clinic_bw_raster
+kde_hospital_bw_raster
+```
+
+we need to assign the projection systems
+
+```{r}
+projection(kde_clinic_bw_raster) <- CRS("+init=EPSG:5179")
+kde_clinic_bw_raster
+projection(kde_hospital_bw_raster) <- CRS("+init=EPSG:5179")
+kde_hospital_bw_raster
+```
+
+Visualising the output in tmap
+
+```{r}
+tmap_mode('plot')
+clinic_densmap <- tm_shape(kde_clinic_bw_raster) + 
+  tm_raster("v") +
+  tm_layout(legend.position = c("right", "bottom"), frame = FALSE)
+clinic_densmap
+```
+
+```{r}
+tmap_mode('plot')
+tm_shape(kde_hospital_bw_raster) + 
+  tm_raster("v") +
+  tm_layout(legend.position = c("right", "bottom"), frame = FALSE
+            )
+```
+
+As we can see from the above graph, gangnam-gu is heavily concentrated fro clinics, for hospital, we can see that there are 2 areas that is highly concentrated, Jung-gu and yeongdeungpo-gu.
+
+There are a few advantages that Kernel Density Map has over Point Map. Let's compare our the point map for the against our just-plotted density map.
+
+```{r}
+plot(clinic_seoul)
+clinic_densmap
+```
+
+With the kernel density map, denser areas with a heavier distribution of clinics and hospital are easily spotted. This is because the kernel density z-estimate helps to smooth out the points in a given area - a much larger 'smoothing effect' than point density, which in turn is helped by the visualisation that kernel density maps have: its range for distributions.concentrations is clearly indicated by the gradient of colour - in my case, ranging from yellow to green for the different bands. Compare this against the individual points in a point map, which at most shows concentration of certain areas, but makes it hard for the viewer to comprehensively compare the distributions of different regions.
+
+Nearest Neighbour Analysis
+
+Ho = The distribution of clinics are randomly distributed.
+
+H1= The distribution of clinics are not randomly distributed.
+
+The 95% confident interval will be used.
+
+```{r}
+clarkevans.test(clinic_seoul,
+                correction="none",
+                clipregion="seoul_owin",
+                alternative=c("clustered"),
+                nsim=999)
+```
+
+reject the null hypothesis, because p-value is less than 0.05
+
+Ho = The distribution of hospital are randomly distributed.
+
+H1= The distribution of hospital are not randomly distributed.
+
+```{r}
+clarkevans.test(hospital_seoul,
+                correction="none",
+                clipregion="seoul_owin",
+                alternative=c("clustered"),
+                nsim=999)
+```
+
+reject the null hypothesis, because p-value is less than 0.05
+
+## K function
+
+k function calculates for a radius r the proportion of cells with a value below r in the distance matrix between all the points Did. The K function estimates "the average number of neighbours of a typical random point".
+
+```{r}
+K_clinic = Kest(clinic_seoul, correction = "Ripley")
+plot(K_clinic, . -r ~ r, ylab= "K(d)-r", xlab = "d(m)")
+```
+
+```{r}
+K_clinic.csr <- envelope(clinic_seoul, Kest, nsim = 39, rank = 1, glocal=TRUE)
+```
+
+```{r}
+plot(K_clinic.csr, . - r ~ r, xlab="d", ylab="K(d)-r")
+```
+
+Conclusion: The observed K(r) is far above the K(theo) as well as the envelope - indicating that clinics in seoul area are clustered. Hence, we reject the null hypothesis that clinic in the seoul area are randomly distributed at 99% confident interval.
+
+```{r}
+K_hospital = Kest(hospital_seoul, correction = "Ripley")
+plot(K_hospital, . -r ~ r, ylab= "K(d)-r", xlab = "d(m)")
+```
+
+```{r}
+K_hospital.csr <- envelope(hospital_seoul, Kest, nsim = 39, rank = 1, glocal=TRUE)
+```
+
+```{r}
+plot(K_hospital.csr, . - r ~ r, xlab="d", ylab="K(d)-r")
+```
+
+## L function for clinic
+
+```{r}
+L_clinic = Lest(clinic_seoul, correction = "Ripley")
+plot(L_clinic, . -r ~ r, 
+     ylab= "L(d)-r", xlab = "d(m)")
+```
+
+```{r}
+L_clinic.csr <- envelope(clinic_seoul, Lest, nsim = 39, rank = 1, glocal=TRUE)
+```
+
+```{r}
+plot(L_clinic.csr, . - r ~ r, xlab="d", ylab="L(d)-r")
+```
+
+## L function for hospital
+
+```{r}
+L_hospital = Lest(hospital_seoul, correction = "Ripley")
+plot(L_clinic, . -r ~ r, 
+     ylab= "L(d)-r", xlab = "d(m)")
+```
+
+```{r}
+L_hospital.csr <- envelope(hospital_seoul, Lest, nsim = 39, rank = 1, glocal=TRUE)
+```
+
+```{r}
+plot(L_hospital.csr, . - r ~ r, xlab="d", ylab="L(d)-r")
+```
