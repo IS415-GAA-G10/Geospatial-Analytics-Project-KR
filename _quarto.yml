@@ -7,6 +7,8 @@ website:
     left:
     - text: "Project Outline"
       href: "Project_Outline.html"
+    - text: "Research Paper"
+      href: "Research_Paper.html"
     - text: "Rshiny Application"
     right: 
       - href: index.qmd
