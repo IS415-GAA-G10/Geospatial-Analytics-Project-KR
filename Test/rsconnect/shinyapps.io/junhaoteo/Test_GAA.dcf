@@ -1,0 +1,13 @@
+name: Test_gaa
+title: Test_gaa
+username:
+account: junhaoteo
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 8801884
+bundleId: 7067868
+url: https://junhaoteo.shinyapps.io/Test_gaa/
+when: 1681062476.34752
+lastSyncTime: 1681062476.34754
+asMultiple: FALSE
+asStatic: FALSE
