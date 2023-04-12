@@ -220,7 +220,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     <div>
     <div class="quarto-title-meta-heading">Modified</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">April 7, 2023</p>
+      <p class="date-modified">April 11, 2023</p>
     </div>
   </div>
     
@@ -261,7 +261,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </section>
 <section id="second-point-pattern-analysis" class="level3" data-number="4.0.2">
 <h3 data-number="4.0.2" class="anchored" data-anchor-id="second-point-pattern-analysis"><span class="header-section-number">4.0.2</span> Second-Point Pattern Analysis</h3>
-<p>In this application, we have use K and L function.</p>
+<p>In this application, we have used K and L function.</p>
 <p>K function is a statistical method used to test for clustering or dispersion of points in a spatial region. It compares the observed distribution of points to a null model of complete spatial randomness.</p>
 <p>We have run the 39 number trials (nsim) in the code chunk and based on the results we have observed that K(r) is far above the K(theo) as well as the envelope - indicating that clinics in Seoul area are very clustered as compared to hospital. Hence, we reject the null hypothesis that both clinic and hospital in Seoul area are randomly distributed at 95% confident interval</p>
 <p>L function is another statistical method used to test for clustering or dispersion of points in a spatial region. It measures the expected number of points within a certain distance of each other and compares it to a null model of complete spatial randomness.</p>
@@ -270,6 +270,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </section>
 <section id="methods-2---co-location-analysis" class="level1" data-number="5">
 <h1 data-number="5"><span class="header-section-number">5</span> Methods 2 - Co-location Analysis</h1>
+<p>Co-location analysis between residential buildings and Hospitals in Seoul</p>
+<p><img src="images/hospitals_colocation.png" class="img-fluid"></p>
+<p>Co-location analysis between residential buildings and Clinics in Seoul</p>
+<p><img src="images/clinics_colocation.png" class="img-fluid"></p>
+<p>LCLQ values can be used to determine the spatial relationship between the location of clinics and residential buildings. In this case, point-based approach is used. For points marked with the value 1 (in yellow), it indicates that there is a hospital/clinic as a nearest neighbour. Those with no access or low access to clinics/hospitals, the points are displayed in pink.</p>
+<p>LCLQ also adopts distance ranks adaptive bandwidth, and ensures that exactly the same number of points is involved in the estimation of LCLQ at each marked point, returning more robust and reliable results.</p>
+<p>Given the high rate of healthcare needed for the Korean populations, accessibility to hospitals and clinics are vital especially during needs of emergencies. Hence, with this colocation analysis, residents will be able to add this consideration before deciding their area of residence. In contrast, staying within the vicinity of hospitals and clinics can have cons as well, such as having heavier traffic and presence of higher noise levels. For infectious diseases, the chances of spreading will be higher. However, if benefits outweigh cons, it will still be more ideal to have better access to medical facilities.</p>
 </section>
 <section id="methods-3---network-constrained-spatial-point-analysis" class="level1" data-number="6">
 <h1 data-number="6"><span class="header-section-number">6</span> Methods 3 - Network Constrained Spatial Point Analysis</h1>
@@ -312,6 +319,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </section>
 <section id="future-work" class="level1" data-number="7">
 <h1 data-number="7"><span class="header-section-number">7</span> Future Work</h1>
+<p>To improve our scope of the research if we were given the time, we can further expand the analysis to whole of Korea, to find out the areas who have inadequate access to medical facilities currently and the government of Korea can consider improving the medical accessibility in those areas in order to increase the livability and quality of lives of the residents there. We can also conduct further data collection by categorising the type of hospitals and clinics and classifying them in terms of their specialisation, so residents can select which hospitals or clinics to visit to tailor to their needs.</p>
 
 
 </section>
