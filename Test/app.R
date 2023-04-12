@@ -201,12 +201,6 @@ ui <- navbarPage("Hospital Playlist",
                                                                   max = 100,
                                                                   step = 1,
                                                                   value = 49),
-                                                     numericInput(inputId = "n_sim",
-                                                                  label = "Number of Simulations: (key in a number between 0 to 100)",
-                                                                  min = 0,
-                                                                  max = 100,
-                                                                  step = 1,
-                                                                  value = 49),
                                                      numericInput(inputId = "neighbour",
                                                                   label = "Number of neighbours",
                                                                   min = 0,
@@ -481,7 +475,7 @@ server <- function(input, output) {
       #co-location Section
       #co-location Visualisation
       observeEvent(input$Colocation_Run, {
-        output$Colocation_V <- renderTmap({
+        
           req(Healthcare_filtered(), Variable_filtered(), Studyarea_filtered())
           healthcare_variable <- rbind(Healthcare_filtered(), Variable_filtered())
           nb_healthcare <- include_self(
@@ -497,6 +491,8 @@ server <- function(input, output) {
           
           p_sim_column <- grep("p_sim", colnames(healthcare_variable_LCLQ), value = TRUE)
           significant <-subset(healthcare_variable_LCLQ, healthcare_variable_LCLQ[[p_sim_column]] < as.numeric(input$alpha))
+          if (nrow(significant) >0){
+          output$Colocation_V <- renderTmap({
           tm_shape(Studyarea_filtered())+
             tm_polygons() +
             tm_shape(significant)+ 
@@ -505,8 +501,20 @@ server <- function(input, output) {
                     border.col = "black",
                     border.lwd = 0.5,
                     palette = input$palette)
-        })
-      })
+          })
+          }
+          else {
+            output$Colocation_V <- renderTmap({
+              req(FALSE) # Stop rendering
+              NULL
+            })
+            showModal(modalDialog(
+              title = "No significant points below inputted alpha value",
+              "Please try another significance level",
+              easyClose = TRUE
+            ))
+          }
+          })
       
       #=============================================================================
       # NetKDE Section
