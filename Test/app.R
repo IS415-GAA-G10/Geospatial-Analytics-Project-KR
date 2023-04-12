@@ -11,6 +11,7 @@ library(spNetwork)
 library(spatstat)
 library(raster)
 library(maptools)
+library(sfdep)
 options(shiny.maxRequestSize = 30*1024^2)
 
 ui <- navbarPage("Hospital Playlist",
@@ -69,147 +70,238 @@ ui <- navbarPage("Hospital Playlist",
                                     tags$ul(
                                       tags$li("Visualisation of Local Co-Location Points"),
                                       tags$li("Co-Location Statistical Interpretation")))
-                                  )
-                                )
+                                ),
+                                h2(strong("Requirements")),
+                                hr(),
+                                span("Do note that data wrangling should also be done before uploading the files into the application.
+                                      Loading of .rds files are required in order to perform the analysis.
+                                  
+                                      Example of .rds files format are as follows: 
+                                      ",
+                                     
+                                     style = "font-size:150%"),
+                                br(),
+                                img(src="rds_file_format.png"),
+                                br(),
+                                br(),
+                                br(),
+                                br(),
+                                br(),
+                                br(),
+                                br()
                               )
+                              
                             )
-                          ),
+                          )
+                 ),
                  tabPanel("Data Import", fluid = TRUE, icon=icon("database"),
                           sidebarLayout(position = 'left',
-                                        sidebarPanel(fluid = TRUE, width = 3,
+                                        sidebarPanel(fluid = TRUE, width = 4,
                                                      tags$strong("RDS Data Import (Healthcare):"),
                                                      tags$br(),
                                                      tags$i("Upload two RDS files containing point data"),
                                                      tags$hr(),
                                                      fileInput("healthcare", 
-                                                               "Upload rds file of healthcare points",
+                                                               "Upload rds file of healthcare points [POINT data]",
                                                                accept = c(".rds")),
                                                      fileInput("other_variable", 
-                                                               "Upload rds file of another variable",
+                                                               "Upload rds file of another variable [POINT data]",
                                                                accept = c(".rds")),
                                                      fileInput("network",
-                                                               "Upload rds file of transport networks",
+                                                               "Upload rds file of transport networks [LINE data]",
                                                                accept = c(".rds")),
                                                      fileInput("studyarea",
-                                                               "Upload rds file of study area shapefile",
+                                                               "Upload rds file of study area shapefile [POLYGON data]",
                                                                accept = c(".rds")),
                                                      actionButton("submit", "Submit"),
                                                      uiOutput("district_selector")
-                                                     ),
-                                        mainPanel(width = 9,
+                                        ),
+                                        mainPanel(width = 8,
                                                   withSpinner(tmapOutput("point_map")),
                                                   
-                          )),
+                                        )),
                  ),
                  tabPanel("Conventional Spatial Point Pattern Analysis", fluid = TRUE,
-                          
+                          sidebarLayout(position = 'left',
+                                        sidebarPanel(fluid = TRUE, width = 3,
+                                                     conditionalPanel(
+                                                       'input.SPPA === "First-Spatial Point Pattern KDE Visualization"',
+                                                       tags$strong("Spatial Point Pattern Variable Inputs"),
+                                                       numericInput(inputId = "crs",
+                                                                    label = "Input the coordinate reference system (CRS)",
+                                                                    min =0,
+                                                                    value =4326,
+                                                                    step =1),
+                                                       selectInput(inputId = "SPPA_bw",
+                                                                   label = "Select the automatic bandwidth method to be used:",
+                                                                   choices = c("bw.diggle()" = "bw.diggle",
+                                                                               "bw.CvL()" =  "bw.CvL", 
+                                                                               "bw.scott()" = "bw.scott",
+                                                                               "bw.ppl()" = "bw.ppl"),
+                                                                   selected = "bw.ppl"),
+                                                       selectInput(inputId = "SPPA_kernel",
+                                                                   label = "Select the Kernel smoothing method to be used:",
+                                                                   choices = c("gaussian" = "gaussian",
+                                                                               "epanechnikov" = "epanechnikov", 
+                                                                               "quartic" = "quartic",
+                                                                               "disc" = "disc"),
+                                                                   selected = "gaussian"),
+                                                       actionButton("SPPA1_Run", "Run Analysis"),
+                                                       
+                                                     ),
+                                                     
                                         ),
+                                        mainPanel(width = 9,
+                                                  tabsetPanel(
+                                                    id = "SPPA",
+                                                    tabPanel("First-Spatial Point Pattern KDE Visualization",
+                                                             tmapOutput("SPPA1_output")
+                                                    ),
+                                                    tabPanel("Raster Spatial Point Pattern Visualization",
+                                                             plotOutput("Raster_output")
+                                                    ),
+                                                    tabPanel("G Function",
+                                                             plotOutput("G_output")
+                                                    ),
+                                                    tabPanel("L Function",
+                                                             plotOutput("L_output")
+                                                    )
+                                                  )
+                                        )
+                                        
+                          )
+                 ),
                  tabPanel("Co-Location Analysis",fluid = TRUE,
                           sidebarLayout(position = 'left',
                                         sidebarPanel(fluid = TRUE, width = 3,
-                                                     ),
-                                        mainPanel(width = 9)
-                                        )
-                          ),
-                 tabPanel("Network Constrained Spatial Point Analysis", fluid = TRUE,
-                            sidebarLayout(position = 'left',
-                                          sidebarPanel(fluid = TRUE, width = 3,
-                                                       conditionalPanel(
-                                                         'input.NetKDE === "Network Kernal Density Estimate Visualisation"',
-                                                         tags$strong("Network Kernel Density Estimation Variable Inputs"),
-                                                         selectInput(inputId = "kernel",
-                                                                     label = "Choose the Kernel to be used:",
-                                                                     choices = c("Quartic" = "quartic",
-                                                                                 "Triangle" = "triangle",
-                                                                                 "Tricube" = "tricube",
-                                                                                 "Cosine" = "cosine",
-                                                                                 "Triweight" = "triweight",
-                                                                                 "Epanechnikov" = "epanechnikov",
-                                                                                 "Uniform" = "uniform"),
-                                                                     selected = "quartic"),
-                                                         selectInput(inputId = "method",
-                                                                     label = "Select the Method to be used:",
-                                                                     choices = c("Simple" = "simple",
-                                                                                 "Discontinuous" = "discontinuous", 
-                                                                                 "Continuous" = "continuous"),
-                                                                     selected = "simple"),
-                                                         tags$strong("Visualisation Customisation"),
-                                                         selectInput("palette", "Select color palette:",
-                                                                     choices = c("Reds", "Blues", "magma", "inferno", "cividis")),
-                                                         selectInput("colour", "Select healthcare points color:",
-                                                                     choices = c("red", "green", "blue", "yellow", "purple", "lightblue")),
-                                                         sliderInput("dot_size", "Select dot size:",
-                                                                     min = 0.01, max = 0.1, value = 0.01, step = 0.01),
-                                                         actionButton("NetKDE_Run", "Run Analysis"),
-          
-                                                       ),
-                                                       conditionalPanel(
-                                                         'input.NetKDE === "Network Constrained K-Function Analysis"',
-                                                         numericInput(inputId = "N_SIM",
-                                                                      label = "Number of Simulations: (key in a number between 0 to 1000)",
-                                                                      min = 0,
-                                                                      max = 1000,
-                                                                      step = 1,
-                                                                      value = 99),
-                                                         numericInput(inputId = "conf",
-                                                                      label ="Confidence Interval: (Key in either, 0.01, 0.05, 0.10)",
-                                                                      min = 0.01,
-                                                                      max = 0.10,
-                                                                      value = 0.05),
-                                                         sliderInput(inputId = "end_distance",
-                                                                     label = "Select end distance",
-                                                                     min = 50, 
-                                                                     max = 10000,
-                                                                     value = 5000,
-                                                                     step = 50),
-                                                         actionButton("NetKDE_Kfunc_run", "Run Analysis")
-                                                         
-                                                         
-                                                         
-                                                       ),
-                                                       conditionalPanel(
-                                                         'input.NetKDE === "Network Constrained K-Cross Function Analysis"',
-                                                         numericInput(inputId = "N_SIM",
-                                                                      label = "Number of Simulations: (key in a number between 0 to 1000)",
-                                                                      min = 0,
-                                                                      max = 1000,
-                                                                      step = 1,
-                                                                      value = 99),
-                                                         numericInput(inputId = "conf",
-                                                                      label ="Confidence Interval: (Key in either, 0.01, 0.05, 0.10)",
-                                                                      min = 0.01,
-                                                                      max = 0.10,
-                                                                      value = 0.05),
-                                                         sliderInput(inputId = "end_distance",
-                                                                     label = "Select end distance",
-                                                                     min = 50, 
-                                                                     max = 10000,
-                                                                     value = 5000,
-                                                                     step = 50),
-                                                         actionButton("NetKDE_Kcross_run", "Run Analysis")
-                                                         
-                                                       )
-                                          ),
-                                          mainPanel(width = 9,
-                                                    tabsetPanel(
-                                                      id = "NetKDE",
-                                                      tabPanel("Network Kernal Density Estimate Visualisation",
-                                                               tmapOutput("NetKDE_V")
-                                                      ),
-                                                      tabPanel("Network Constrained K-Function Analysis",
-                                                               plotOutput("NetKDE_Kfunction")
-                                                      ),
-                                                      tabPanel("Network Constrained K-Cross Function Analysis",
-                                                               plotOutput("NetKDE_Kcross")
-                                                      )
-                                                    )
-                                                    )
-                            
-                                          )
-                          
+                                                     tags$strong("Co-Location Analysis Variable Inputs"),
+                                                     hr(),
+                                                     selectInput(inputId = "kernel",
+                                                                 label = "Choose the Kernel to be used:",
+                                                                 choices = c("Quartic" = "quartic",
+                                                                             "Gaussian" = "gaussian",
+                                                                             "Triangular" = "triangular",
+                                                                             "Epanechnikov" = "epanechnikov",
+                                                                             "Uniform" = "uniform"),
+                                                                 selected = "gaussian"),
+                                                     numericInput(inputId = "n_sim",
+                                                                  label = "Number of Simulations: (key in a number between 0 to 100)",
+                                                                  min = 0,
+                                                                  max = 100,
+                                                                  step = 1,
+                                                                  value = 49),
+                                                     tags$strong("Visualisation Customisation"),
+                                                     selectInput("palette", "Select color palette:",
+                                                                 choices = c("Reds", "Blues", "magma", "inferno", "cividis")),
+                                                     selectInput("colour", "Select healthcare points color:",
+                                                                 choices = c("red", "green", "blue", "yellow", "purple", "lightblue")),
+                                                     sliderInput("dot_size", "Select dot size:",
+                                                                 min = 0.01, max = 0.1, value = 0.01, step = 0.01),
+                                                     actionButton("Colocation_Run", "Run Analysis"),
+                                        ),
+                                        mainPanel(width = 9,
+                                                  tmapOutput("Colocation_V"))
                           )
+                 ),
+                 tabPanel("Network Constrained Spatial Point Analysis", fluid = TRUE,
+                          sidebarLayout(position = 'left',
+                                        sidebarPanel(fluid = TRUE, width = 3,
+                                                     conditionalPanel(
+                                                       'input.NetKDE === "Network Kernal Density Estimate Visualisation"',
+                                                       tags$strong("Network Kernel Density Estimation Variable Inputs"),
+                                                       selectInput(inputId = "kernel",
+                                                                   label = "Choose the Kernel to be used:",
+                                                                   choices = c("Quartic" = "quartic",
+                                                                               "Triangle" = "triangle",
+                                                                               "Tricube" = "tricube",
+                                                                               "Cosine" = "cosine",
+                                                                               "Triweight" = "triweight",
+                                                                               "Epanechnikov" = "epanechnikov",
+                                                                               "Uniform" = "uniform"),
+                                                                   selected = "quartic"),
+                                                       selectInput(inputId = "method",
+                                                                   label = "Select the Method to be used:",
+                                                                   choices = c("Simple" = "simple",
+                                                                               "Discontinuous" = "discontinuous", 
+                                                                               "Continuous" = "continuous"),
+                                                                   selected = "simple"),
+                                                       tags$strong("Visualisation Customisation"),
+                                                       selectInput("palette", "Select color palette:",
+                                                                   choices = c("Reds", "Blues", "magma", "inferno", "cividis")),
+                                                       selectInput("colour", "Select healthcare points color:",
+                                                                   choices = c("red", "green", "blue", "yellow", "purple", "lightblue")),
+                                                       sliderInput("dot_size", "Select dot size:",
+                                                                   min = 0.01, max = 0.1, value = 0.01, step = 0.01),
+                                                       actionButton("NetKDE_Run", "Run Analysis"),
+                                                       
+                                                     ),
+                                                     conditionalPanel(
+                                                       'input.NetKDE === "Network Constrained K-Function Analysis"',
+                                                       numericInput(inputId = "N_SIM",
+                                                                    label = "Number of Simulations: (key in a number between 0 to 1000)",
+                                                                    min = 0,
+                                                                    max = 1000,
+                                                                    step = 1,
+                                                                    value = 99),
+                                                       numericInput(inputId = "conf",
+                                                                    label ="Confidence Interval: (Key in either, 0.01, 0.05, 0.10)",
+                                                                    min = 0.01,
+                                                                    max = 0.10,
+                                                                    value = 0.05),
+                                                       sliderInput(inputId = "end_distance",
+                                                                   label = "Select end distance",
+                                                                   min = 50, 
+                                                                   max = 10000,
+                                                                   value = 5000,
+                                                                   step = 50),
+                                                       actionButton("NetKDE_Kfunc_run", "Run Analysis")
+                                                       
+                                                       
+                                                       
+                                                     ),
+                                                     conditionalPanel(
+                                                       'input.NetKDE === "Network Constrained K-Cross Function Analysis"',
+                                                       numericInput(inputId = "N_SIM",
+                                                                    label = "Number of Simulations: (key in a number between 0 to 1000)",
+                                                                    min = 0,
+                                                                    max = 1000,
+                                                                    step = 1,
+                                                                    value = 99),
+                                                       numericInput(inputId = "conf",
+                                                                    label ="Confidence Interval: (Key in either, 0.01, 0.05, 0.10)",
+                                                                    min = 0.01,
+                                                                    max = 0.10,
+                                                                    value = 0.05),
+                                                       sliderInput(inputId = "end_distance",
+                                                                   label = "Select end distance",
+                                                                   min = 50, 
+                                                                   max = 10000,
+                                                                   value = 5000,
+                                                                   step = 50),
+                                                       actionButton("NetKDE_Kcross_run", "Run Analysis")
+                                                       
+                                                     )
+                                        ),
+                                        mainPanel(width = 9,
+                                                  tabsetPanel(
+                                                    id = "NetKDE",
+                                                    tabPanel("Network Kernal Density Estimate Visualisation",
+                                                             tmapOutput("NetKDE_V")
+                                                    ),
+                                                    tabPanel("Network Constrained K-Function Analysis",
+                                                             plotOutput("NetKDE_Kfunction")
+                                                    ),
+                                                    tabPanel("Network Constrained K-Cross Function Analysis",
+                                                             plotOutput("NetKDE_Kcross")
+                                                    )
+                                                  )
+                                        )
+                                        
+                          )
+                          
                  )
-                
+)
+
 server <- function(input, output) {
   check_file_extension <- function(filepath, ext) {
     tools::file_ext(filepath) %in% ext
@@ -253,6 +345,7 @@ server <- function(input, output) {
         Variable <- point2()[point2()$name_en == input$selected_district, ]
         Network <- line1()[line1()$name_en == input$selected_district, ]
         
+        #reactive variables to use
         Healthcare_filtered(Healthcare)
         Variable_filtered(Variable)
         Network_filtered(Network)
@@ -268,8 +361,99 @@ server <- function(input, output) {
           tm_layout(title = "Filtered Study Area and Intersections")
       })
       
+      
+      # SHERRY CODE STARTS HERE 
+      #  kdeplot <- density(healthcare_owin.km,
+      #               sigma=as.numeric(input$SPPA_bw),
+      #                edge=TRUE,
+      #               kernel=input$SPPA_kernel) 
+      #  kdeplot$plotk
+      #=============================================================================
+      # SPPA 1
+      observeEvent(input$SPPA1_Run, {
+        output$SPPA1_output <- renderTmap({
+          req(Healthcare_filtered(),  Studyarea_filtered())
+          H <- Healthcare_filtered()
+          S <- Studyarea_filtered()
+          seoul <- as_Spatial(S)
+          seoul_sp <- as(seoul, "SpatialPolygons")
+          seoul_owin <- as(seoul_sp, "owin") 
+          healthcare_s <- as_Spatial(H)
+          healthcare_sp <- as(healthcare_s, "SpatialPoints")
+          healthcare_ppp <- as(healthcare_sp, "ppp")
+          healthcare_owin = healthcare_ppp[seoul_owin]
+          healthcare_owin.km <- rescale(healthcare_owin, 1000, "km")
+          
+          
+          if (input$SPPA_bw == "bw.ppl"){
+            the_bw <- bw.ppl(healthcare_owin.km)
+          } else if (input$SPPA_bw == "bw.diggle"){
+            the_bw <- bw.diggle(healthcare_owin.km)
+          } else if (input$SPPA_bw == "bw.CvL"){
+            the_bw <- bw.CvL(healthcare_owin.km)
+          } else if (input$SPPA_bw == "bw.scott"){
+            the_bw <- bw.scott(healthcare_owin.km)
+          } else if (input$SPPA_bw == "bw.ppl"){
+            the_bw <- bw.ppl(healthcare_owin.km)
+          }
+          kde <- density(healthcare_owin.km,
+                         sigma=as.numeric(the_bw),
+                         edge=TRUE,
+                         kernel=input$SPPA_kernel)
+          
+          
+          gridded_kde <- as.SpatialGridDataFrame.im(kde)
+          kde_raster <- raster(gridded_kde)
+          c <- paste0("+init=EPSG:", input$crs, " +units=km")
+          projection(kde_raster) <- CRS(c)
+          #tm_shape(seoul_owin) +
+          # tm_borders(col = 'black',
+          #           lwd = 1,
+          #          alpha = 0.5) +
+          tm_shape(kde_raster) + 
+            tm_raster("v", alpha = 0.7) +
+            tm_layout(legend.outside = TRUE, frame = FALSE, title = "KDE") +
+            tmap_options(basemaps = c("Esri.WorldGrayCanvas","OpenStreetMap", "Stamen.TonerLite"),
+                         basemaps.alpha = c(0.8, 0.8, 0.8)) +
+            tm_view(set.zoom.limits = c(11,13)) 
+          
+        })
+      })         
+      
+      
+      #co-location Section
+      #co-location Visualisation
+      observeEvent(input$Colocation_Run, {
+        output$Colocation_V <- renderTmap({
+          req(Healthcare_filtered(), Variable_filtered(), Studyarea_filtered())
+          healthcare_variable <- rbind(Healthcare_filtered(), Variable_filtered())
+          nb_healthcare <- include_self(
+            st_knn(st_geometry(healthcare_variable), 6))
+          wt_healthcare <- st_kernel_weights(nb_healthcare, 
+                                             healthcare_variable, 
+                                             input$kernel, 
+                                             adaptive = TRUE)
+          A <- Healthcare_filtered()$name_en
+          B <- Variable_filtered()$name_en
+          LCLQ_healthcare <- local_colocation(A, B, nb_healthcare, wt_healthcare, input$n_sim)
+          healthcare_variable_LCLQ <- cbind(healthcare_variable, LCLQ_healthcare)
+          new_name = Studyarea_filtered()$name_en[1]
+          new_name <- sub("-", ".", new_name)
+          tmap_mode("view")
+          tm_shape(Studyarea_filtered()) +
+            tm_polygons() +
+            tm_shape(healthcare_variable_LCLQ)+ 
+            tm_dots(col = new_name,
+                    size = input$dot_size,
+                    border.col = "black",
+                    border.lwd = 0.5,
+                    palette = input$palette)
+        })
+      })
+      
+      #=============================================================================
       # NetKDE Section
-          # NetKDE Visualisation
+      # NetKDE Visualisation
       observeEvent(input$NetKDE_Run, {
         output$NetKDE_V <- renderTmap({
           req(Healthcare_filtered(), Variable_filtered(), Network_filtered(), Studyarea_filtered())
@@ -303,7 +487,8 @@ server <- function(input, output) {
                     size = input$dot_size)
         })
       })
-          #NetKDE K Function
+      #=============================================================================
+      #NetKDE K Function
       observeEvent(input$NetKDE_Kfunc_run, {
         output$NetKDE_Kfunction <- renderPlot({
           req(Healthcare_filtered(), Variable_filtered(), Network_filtered(), Studyarea_filtered())
@@ -323,7 +508,8 @@ server <- function(input, output) {
           kfun_hospital$plotk
         })
       })
-          # Net KDE Kcross
+      #=============================================================================
+      # Net KDE Kcross
       observeEvent(input$NetKDE_Kcross_run, {
         output$NetKDE_Kcross <- renderPlot({
           req(Healthcare_filtered(), Variable_filtered(), Network_filtered(), Studyarea_filtered())
@@ -344,7 +530,7 @@ server <- function(input, output) {
         })
       })
       # End of NetKDE section.
-      
+      #=============================================================================
       
     } else {
       # Show an error message if the uploaded files have the wrong extension
@@ -360,18 +546,17 @@ server <- function(input, output) {
     }
   })
   
-    
-    
+  
+  
 }
 
 shinyApp(ui = ui, server = server)
-                      
-                    
 
-                                     
-                                     
-                                     
-                                     
-                                     
-                                     
-                                     
+
+
+
+
+
+
+
+
