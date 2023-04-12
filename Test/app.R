@@ -17,6 +17,7 @@ options(shiny.maxRequestSize = 30*1024^2)
 ui <- navbarPage("Hospital Playlist",
                  theme = shinytheme('flatly'),
                  tabPanel("About Us",
+                          icon = icon("university"),
                           fluidPage(
                             sidebarLayout(
                               sidebarPanel(
@@ -61,9 +62,9 @@ ui <- navbarPage("Hospital Playlist",
                                     style = "font-size: 150%",
                                     strong("Network Constrained Spatial Point Analysis"),
                                     tags$ul(
-                                      tags$li("Visualisation of Points and Network"),
                                       tags$li("Visualisation of NetKDE"),
-                                      tags$li("Network Constrained G and K Function Analysis"))),
+                                      tags$li("Network Constrained K Function Analysis"),
+                                      tags$li("Network Constrained K-cross Function Analysis"))),
                                   tags$li(
                                     style = "font-size: 150%",
                                     strong("Co-Location Analysis"),
@@ -94,7 +95,7 @@ ui <- navbarPage("Hospital Playlist",
                             )
                           )
                  ),
-                 tabPanel("Data Import", fluid = TRUE, icon=icon("database"),
+                 tabPanel("Data Import", fluid = TRUE, icon=icon("upload"),
                           sidebarLayout(position = 'left',
                                         sidebarPanel(fluid = TRUE, width = 4,
                                                      tags$strong("RDS Data Import (Healthcare):"),
@@ -121,7 +122,7 @@ ui <- navbarPage("Hospital Playlist",
                                                   
                                         )),
                  ),
-                 tabPanel("Conventional Spatial Point Pattern Analysis", fluid = TRUE,
+                 tabPanel("Conventional Spatial Point Pattern Analysis", fluid = TRUE, icon =icon("map"),
                           sidebarLayout(position = 'left',
                                         sidebarPanel(fluid = TRUE, width = 3,
                                                      conditionalPanel(
@@ -182,7 +183,7 @@ ui <- navbarPage("Hospital Playlist",
                                         
                           )
                  ),
-                 tabPanel("Co-Location Analysis",fluid = TRUE,
+                 tabPanel("Co-Location Analysis",fluid = TRUE, icon = icon("map-marker"),
                           sidebarLayout(position = 'left',
                                         sidebarPanel(fluid = TRUE, width = 3,
                                                      tags$strong("Co-Location Analysis Variable Inputs"),
@@ -224,7 +225,7 @@ ui <- navbarPage("Hospital Playlist",
                                                   tmapOutput("Colocation_V"))
                           )
                  ),
-                 tabPanel("Network Constrained Spatial Point Analysis", fluid = TRUE,
+                 tabPanel("Network Constrained Spatial Point Analysis", fluid = TRUE, icon = icon("road"),
                           sidebarLayout(position = 'left',
                                         sidebarPanel(fluid = TRUE, width = 3,
                                                      conditionalPanel(
@@ -253,7 +254,7 @@ ui <- navbarPage("Hospital Playlist",
                                                                    choices = c("red", "green", "blue", "yellow", "purple", "lightblue")),
                                                        sliderInput("dot_size", "Select dot size:",
                                                                    min = 0.01, max = 0.1, value = 0.01, step = 0.01),
-                                                       actionButton("NetKDE_Run", "Run Analysis"),
+                                                       actionButton("NetKDE_Run", "Enter"),
                                                        
                                                      ),
                                                      conditionalPanel(
@@ -307,21 +308,84 @@ ui <- navbarPage("Hospital Playlist",
                                                   tabsetPanel(
                                                     id = "NetKDE",
                                                     tabPanel("Network Kernal Density Estimate Visualisation",
-                                                             tmapOutput("NetKDE_V")
-                                                    ),
+                                                             column(12,
+                                                                    h6(tags$strong("Note:")),
+                                                                    h6(tags$i("By default, Kernel is set to Quartic and Method is set to Simple to plot the map,
+                                                                        select alternative choices and click on 'Enter' to update the map.")),
+                                                                    h6(tags$i("Please press 'Enter' and wait for the map to load. This section takes slightly longer so do be patient.")),
+                                                                    tmapOutput("NetKDE_V"),
+                                                             tabsetPanel(
+                                                               id = "NetSPPA_KDE_info",
+                                                               tabPanel("About Network-Constrained Kernel Density Estimation",
+                                                                        column(12,
+                                                                               h2("What is Network-Constrained Kernel Density Estimation?"),
+                                                                               h5("A classical Kernel Density Estimate (KDE) estimates the continuous density of a set of events in a
+                                                                                  two-dimensional space, which is not suitable for analysing density of events occuring on a network.
+                                                                                  Therefore, the modified Network-Constrained Kernel Density Estimation is used to calculate density of events
+                                                                                  occuring along the edges of a network."),
+                                                                               h2("How to interpret the output?"),
+                                                                               h5("The darker the color of the road, the higher the relative density of the point features as compared 
+                                                                                  to road segments with lighter color (meaning lower density).")
+                                                    ))))),
                                                     tabPanel("Network Constrained K-Function Analysis",
-                                                             plotOutput("NetKDE_Kfunction")
-                                                    ),
+                                                             
+                                                             column(12,
+                                                                    h6(tags$strong("Note:")),
+                                                                    h6(tags$i("You can select the number of simulation and confidence level to plot out the Kfunction Graph. In addition,
+                                                                    end distance lets you set the x axis to your preferred level. Once done selecting the options, click on 'Run Analysis' to update the plot.")),
+                                                                    h6(tags$i("Please for a short while for the graph to load.")),
+                                                             plotOutput("NetKDE_Kfunction"),
+                                                             tabsetPanel(
+                                                               id = "NetSPPA_K_info",
+                                                               tabPanel("About K-Function",
+                                                                        column(12,
+                                                                               h2("What is K-Function?"),
+                                                                               h5("K-function measures the number of events found up to a 
+                                                                                 given distance of any particular event, and the graph helps illustrates the spatial dependence (clustering 
+                                                                                    or dispersion) of point features (healthcare facility) over a wide range of distances (m)."),
+                                                                               h2("How to interpret the graph?"),
+                                                                               h4("Ho: The observed spatial point events (i.e distribution of healthcare facilities) are uniformly distributed over a street network in selected area"),
+                                                                               h4("H1: The observed spatial point events (i.e distribution of healthcare facilities) are spatially dependent over a street network in selected Area."),
+                                                                               h5("If the observed K (blue line) is above the envelope, then "),
+                                                                               h5(tags$strong("we can reject null hypothesis (the value is statistically significant) and conclude the points resemble clustered distribution.")),
+                                                                               h5("If not, if the observed K is below the envelope, then "),
+                                                                               h5(tags$strong("we can reject null hypothesis (the value is statistically significant) and conclude the points resemble dispersed distribution.")),
+                                                                               h5("Else, if the observed K is inside the envelope, it means "),
+                                                                               h5(tags$strong("the null hypothesis of CSR cannot be rejected (the value is not statistically significant) and we conclude the points resemble random distribution."))
+                                                                              
+                                                                        ))))),
                                                     tabPanel("Network Constrained K-Cross Function Analysis",
-                                                             plotOutput("NetKDE_Kcross")
+                                                             h6(tags$strong("Note:")),
+                                                             h6(tags$i("You can select the number of simulation and confidence level to plot out the Kfunction Graph. In addition,
+                                                                    end distance lets you set the x axis to your preferred level. Once done selecting the options, click on 'Run Analysis' to update the plot.")),
+                                                             h6(tags$i("Please for a short while for the graph to load.")),
+                                                             plotOutput("NetKDE_Kcross"),
+                                                             tabsetPanel(
+                                                               id = "NetSPPA_CrossK_info",
+                                                               tabPanel("About Cross K-Function",
+                                                                        column(12,
+                                                                               h2("What is Cross K-Function?"),
+                                                                               h5("An extension of K-function, the Cross K-function measures the number of main point events (Healthcare facilities) around
+                                                                         a set of secondary point events (Your chosen variable), and the graph illustrates the spatial dependence (clustering 
+                                                                         or dispersion) of the Healthcare points around point your chosen variable points over a wide range of distances (m)."),
+                                                                               h2("How to interpret the graph?"),
+                                                                               h4("Ho: The two types of points resemble random distribution and are independent of each other."),
+                                                                               h5("If the observed K (blue line) is above the envelope, then "),
+                                                                               h5(tags$strong("we can reject null hypothesis (the value is statistically significant) and conclude the two types of points resemble attraction patterns, suggesting clustering.")),
+                                                                               h5("If not, if the observed K (blue line) is below the envelope, then "),
+                                                                               h5(tags$strong("we can reject null hypothesis (the value is statistically significant) and conclude the two types of points resemble repulsion patterns, suggesting dispersion.")),
+                                                                               h5("Else, if the observed K (blue line) is inside the envelope, it means "),
+                                                                               h5(tags$strong("the null hypothesis of CSR cannot be rejected (the value is not statistically significant) and we conclude the two types of points resemble random distribution and are independent of each other."))
+                                                                        )))
                                                     )
                                                   )
                                         )
-                                        
                           )
-                          
                  )
 )
+                                  
+                      
+
 
 server <- function(input, output) {
   check_file_extension <- function(filepath, ext) {
