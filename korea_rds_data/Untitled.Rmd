@@ -1,0 +1,71 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+H3 <- read_rds("H3.rds")
+Re3 <- read_rds("Re3.rds")
+```
+
+```{r}
+H3 <- H3 %>%
+  mutate(type = "Hospital")
+Re3 <- Re3 %>%
+  mutate(type = "residence")
+```
+
+```{r}
+write_rds(H3, "H3a.rds")
+write_rds(Re3, "Re3a.rds")
+```
+
+```{r}
+S3 <- read_rds("S3.rds")
+```
+
+```{r}
+H3 <- read_rds("H3a.rds")
+```
+
+```{r}
+Gangnam_H <- H3 %>%
+  filter(name_en == "Gangnam-gu")
+Res <- Re3 %>%
+  filter(name_en == "Gangnam-gu")
+```
+
+```{r}
+healthcare_variable <- rbind(Gangnam_H, Res)
+nb_healthcare <- include_self(st_knn(st_geometry(healthcare_variable), 6))
+wt_healthcare <- st_kernel_weights(nb_healthcare, 
+                                   healthcare_variable, 
+                                   "quartic", 
+                                   adaptive = TRUE)
+A <- Gangnam_H$type
+B <- Res$type
+LCLQ_healthcare <- local_colocation(A, B, nb_healthcare, wt_healthcare, 49)
+healthcare_variable_LCLQ <- cbind(healthcare_variable, LCLQ_healthcare)
+```
+
+```{r}
+# Assuming your dataframe is called 'df'
+matching_columns <- grep("p_sim", colnames(healthcare_variable_LCLQ), value = TRUE)
+column_name <- matching_columns[1]
+```
+
+```{r}
+subset_lclq <- subset(healthcare_variable_LCLQ, healthcare_variable_LCLQ[[column_name]] < 0.05)
+```
+
+```{r}
+tmap_mode("view")
+  tm_shape(significant)+ 
+  tm_dots(col = matching_columns,
+  size = 0.01,
+  border.col = "black",
+  border.lwd = 0.5
+  )
+```
+
+

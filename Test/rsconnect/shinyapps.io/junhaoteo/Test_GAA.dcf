@@ -5,9 +5,10 @@ account: junhaoteo
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 8801884
-bundleId: 7067868
+bundleId: 7078683
 url: https://junhaoteo.shinyapps.io/Test_gaa/
-when: 1681062476.34752
-lastSyncTime: 1681062476.34754
+when: 1681278856.67023
+lastSyncTime: 1681278856.67024
 asMultiple: FALSE
 asStatic: FALSE
+ignoredFiles: sherry_app.R

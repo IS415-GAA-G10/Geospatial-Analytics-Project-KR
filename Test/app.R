@@ -201,6 +201,18 @@ ui <- navbarPage("Hospital Playlist",
                                                                   max = 100,
                                                                   step = 1,
                                                                   value = 49),
+                                                     numericInput(inputId = "n_sim",
+                                                                  label = "Number of Simulations: (key in a number between 0 to 100)",
+                                                                  min = 0,
+                                                                  max = 100,
+                                                                  step = 1,
+                                                                  value = 49),
+                                                     numericInput(inputId = "neighbour",
+                                                                  label = "Number of neighbours",
+                                                                  min = 0,
+                                                                  max = 10,
+                                                                  step =1,
+                                                                  value = 6),
                                                      tags$strong("Visualisation Customisation"),
                                                      selectInput("palette", "Select color palette:",
                                                                  choices = c("Reds", "Blues", "magma", "inferno", "cividis")),
@@ -208,6 +220,10 @@ ui <- navbarPage("Hospital Playlist",
                                                                  choices = c("red", "green", "blue", "yellow", "purple", "lightblue")),
                                                      sliderInput("dot_size", "Select dot size:",
                                                                  min = 0.01, max = 0.1, value = 0.01, step = 0.01),
+                                                     selectInput("alpha",
+                                                                 "Select significance level",
+                                                                 choices = c("0.01", "0.05", "0.10"),
+                                                                 selected = "0.05"),
                                                      actionButton("Colocation_Run", "Run Analysis"),
                                         ),
                                         mainPanel(width = 9,
@@ -469,22 +485,22 @@ server <- function(input, output) {
           req(Healthcare_filtered(), Variable_filtered(), Studyarea_filtered())
           healthcare_variable <- rbind(Healthcare_filtered(), Variable_filtered())
           nb_healthcare <- include_self(
-            st_knn(st_geometry(healthcare_variable), 6))
+            st_knn(st_geometry(healthcare_variable), input$neighbour))
           wt_healthcare <- st_kernel_weights(nb_healthcare, 
                                              healthcare_variable, 
                                              input$kernel, 
                                              adaptive = TRUE)
-          A <- Healthcare_filtered()$name_en
-          B <- Variable_filtered()$name_en
+          A <- Healthcare_filtered()$type
+          B <- Variable_filtered()$type
           LCLQ_healthcare <- local_colocation(A, B, nb_healthcare, wt_healthcare, input$n_sim)
           healthcare_variable_LCLQ <- cbind(healthcare_variable, LCLQ_healthcare)
-          new_name = Studyarea_filtered()$name_en[1]
-          new_name <- sub("-", ".", new_name)
-          tmap_mode("view")
-          tm_shape(Studyarea_filtered()) +
+          
+          p_sim_column <- grep("p_sim", colnames(healthcare_variable_LCLQ), value = TRUE)
+          significant <-subset(healthcare_variable_LCLQ, healthcare_variable_LCLQ[[p_sim_column]] < as.numeric(input$alpha))
+          tm_shape(Studyarea_filtered())+
             tm_polygons() +
-            tm_shape(healthcare_variable_LCLQ)+ 
-            tm_dots(col = new_name,
+            tm_shape(significant)+ 
+            tm_dots(col = p_sim_column,
                     size = input$dot_size,
                     border.col = "black",
                     border.lwd = 0.5,
