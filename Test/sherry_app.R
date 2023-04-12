@@ -361,17 +361,13 @@ server <- function(input, output) {
          
           if (input$SPPA_bw == "bw.ppl"){
             the_bw <- bw.ppl(healthcare_owin.km)
-            }
-            else if (input$SPPA_bw == "bw.diggle"){
+            } else if (input$SPPA_bw == "bw.diggle"){
               the_bw <- bw.diggle(healthcare_owin.km)
-            }
-            else if (input$SPPA_bw == "bw.CvL"){
+            } else if (input$SPPA_bw == "bw.CvL"){
               the_bw <- bw.CvL(healthcare_owin.km)
-            }
-            else if (input$SPPA_bw == "bw.scott"){
+            } else if (input$SPPA_bw == "bw.scott"){
               the_bw <- bw.scott(healthcare_owin.km)
-            }
-            else if (input$SPPA_bw == "bw.ppl"){
+            } else if (input$SPPA_bw == "bw.ppl"){
               the_bw <- bw.ppl(healthcare_owin.km)
             }
           kde <- density(healthcare_owin.km,
@@ -382,12 +378,12 @@ server <- function(input, output) {
  
           gridded_kde <- as.SpatialGridDataFrame.im(kde)
           kde_raster <- raster(gridded_kde)
-          c <- paste0("init=EPSG", input$crs)
+          c <- paste0("+init=EPSG:", input$crs, "+units=km")
           projection(kde_raster) <- CRS(c)
-          #tm_shape(seoul_owin) +
-           # tm_borders(col = 'black',
-            #           lwd = 1,
-             #          alpha = 0.5) +
+          tm_shape(seoul_owin) +
+            tm_borders(col = 'black',
+                       lwd = 1,
+                       alpha = 0.5) +
           tm_shape(kde_raster) + 
             tm_raster("v", alpha = 0.7) +
             tm_layout(legend.outside = TRUE, frame = FALSE, title = "KDE") +
