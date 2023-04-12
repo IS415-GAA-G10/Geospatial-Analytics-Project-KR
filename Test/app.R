@@ -149,6 +149,23 @@ ui <- navbarPage("Hospital Playlist",
                                                        actionButton("SPPA1_Run", "Run Analysis"),
                                                        
                                                      ),
+                                                     conditionalPanel(
+                                                       'input.SPPA === "K & L Function"',
+                                                       tags$strong("K & L Function"),
+                                                       numericInput(inputId = "nsim",
+                                                                    label = "Input the appropriate nsim",
+                                                                    min =0,
+                                                                    value =39,
+                                                                    step =1,
+                                                                    max=999),
+                                                       selectInput(inputId = "KL",
+                                                                   label = "Select the function to be used:",
+                                                                   choices = c("Kest" ,
+                                                                               "Lest"),
+                                                                   selected = "Kest"),
+                                                       actionButton("function_Run", "Run Analysis"),
+                                                       
+                                                     ),
                                                      
                                         ),
                                         mainPanel(width = 9,
@@ -157,14 +174,8 @@ ui <- navbarPage("Hospital Playlist",
                                                     tabPanel("First-Spatial Point Pattern KDE Visualization",
                                                              tmapOutput("SPPA1_output")
                                                     ),
-                                                    tabPanel("Raster Spatial Point Pattern Visualization",
-                                                             plotOutput("Raster_output")
-                                                    ),
-                                                    tabPanel("G Function",
-                                                             plotOutput("G_output")
-                                                    ),
-                                                    tabPanel("L Function",
-                                                             plotOutput("L_output")
+                                                    tabPanel("K & L Function",
+                                                             plotOutput("KL_output")
                                                     )
                                                   )
                                         )
@@ -418,8 +429,38 @@ server <- function(input, output) {
             tm_view(set.zoom.limits = c(11,13)) 
           
         })
-      })         
+      }) 
       
+      #K and L Function 
+      observeEvent(input$function_Run, {
+        output$KL_output <- renderPlot({
+          req(Healthcare_filtered(),  Studyarea_filtered())
+          H <- Healthcare_filtered()
+          S <- Studyarea_filtered()
+          seoul <- as_Spatial(S)
+          seoul_sp <- as(seoul, "SpatialPolygons")
+          seoul_owin <- as(seoul_sp, "owin") 
+          healthcare_s <- as_Spatial(H)
+          healthcare_sp <- as(healthcare_s, "SpatialPoints")
+          healthcare_ppp <- as(healthcare_sp, "ppp")
+          healthcare_owin = healthcare_ppp[seoul_owin]
+          if(input$KL == "Kest"){
+            c="K(d)-r"
+          }else{
+            c="L(d)-r"
+          }
+            
+          klfunction <- envelope(healthcare_owin, input$KL, nsim = input$nsim, rank = 1, glocal=TRUE)
+          plot(klfunction, . - r ~ r, xlab="d", ylab=c)
+          
+          
+        })
+      }) 
+      
+      
+      
+      
+      #=========================================================================================
       
       #co-location Section
       #co-location Visualisation
@@ -551,8 +592,6 @@ server <- function(input, output) {
 }
 
 shinyApp(ui = ui, server = server)
-
-
 
 
 
