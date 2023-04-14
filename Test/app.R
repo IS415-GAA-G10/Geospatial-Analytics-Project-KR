@@ -12,6 +12,9 @@ library(spatstat)
 library(raster)
 library(maptools)
 library(sfdep)
+library(ggplot2) 
+library(plotly) 
+library(ggthemes)
 options(shiny.maxRequestSize = 30*1024^2)
 
 ui <- navbarPage("Hospital Playlist",
@@ -176,7 +179,7 @@ ui <- navbarPage("Hospital Playlist",
                                                              tmapOutput("SPPA1_output")
                                                     ),
                                                     tabPanel("K & L Function",
-                                                             plotOutput("KL_output")
+                                                             plotlyOutput("KL_output")
                                                     )
                                                   )
                                         )
@@ -272,10 +275,10 @@ ui <- navbarPage("Hospital Playlist",
                                                                     value = 0.05),
                                                        sliderInput(inputId = "end_distance",
                                                                    label = "Select end distance",
-                                                                   min = 50, 
-                                                                   max = 10000,
-                                                                   value = 5000,
-                                                                   step = 50),
+                                                                   min = 0, 
+                                                                   max = 2500,
+                                                                   value = 2000,
+                                                                   step = 250),
                                                        actionButton("NetKDE_Kfunc_run", "Run Analysis")
                                                        
                                                        
@@ -297,9 +300,9 @@ ui <- navbarPage("Hospital Playlist",
                                                        sliderInput(inputId = "end_distance",
                                                                    label = "Select end distance",
                                                                    min = 50, 
-                                                                   max = 10000,
-                                                                   value = 5000,
-                                                                   step = 50),
+                                                                   max = 2500,
+                                                                   value = 2000,
+                                                                   step = 250),
                                                        actionButton("NetKDE_Kcross_run", "Run Analysis")
                                                        
                                                      )
@@ -334,7 +337,7 @@ ui <- navbarPage("Hospital Playlist",
                                                                     h6(tags$i("You can select the number of simulation and confidence level to plot out the Kfunction Graph. In addition,
                                                                     end distance lets you set the x axis to your preferred level. Once done selecting the options, click on 'Run Analysis' to update the plot.")),
                                                                     h6(tags$i("Please for a short while for the graph to load.")),
-                                                             plotOutput("NetKDE_Kfunction"),
+                                                             plotlyOutput("NetKDE_Kfunction"),
                                                              tabsetPanel(
                                                                id = "NetSPPA_K_info",
                                                                tabPanel("About K-Function",
@@ -359,7 +362,7 @@ ui <- navbarPage("Hospital Playlist",
                                                              h6(tags$i("You can select the number of simulation and confidence level to plot out the Kfunction Graph. In addition,
                                                                     end distance lets you set the x axis to your preferred level. Once done selecting the options, click on 'Run Analysis' to update the plot.")),
                                                              h6(tags$i("Please for a short while for the graph to load.")),
-                                                             plotOutput("NetKDE_Kcross"),
+                                                             plotlyOutput("NetKDE_Kcross"),
                                                              tabsetPanel(
                                                                id = "NetSPPA_CrossK_info",
                                                                tabPanel("About Cross K-Function",
@@ -507,7 +510,7 @@ server <- function(input, output) {
       
       #K and L Function 
       observeEvent(input$function_Run, {
-        output$KL_output <- renderPlot({
+        output$KL_output <- renderPlotly({
           req(Healthcare_filtered(),  Studyarea_filtered())
           H <- Healthcare_filtered()
           S <- Studyarea_filtered()
@@ -525,9 +528,62 @@ server <- function(input, output) {
           }
             
           klfunction <- envelope(healthcare_owin, input$KL, nsim = input$nsim, rank = 1, glocal=TRUE)
-          plot(klfunction, . - r ~ r, xlab="d", ylab=c)
+          klfunc_df <- as.data.frame(klfunction)
           
+          colour=c("#0D657D","#ee770d","#D3D3D3")
+          csr_plot <- ggplot(klfunc_df, aes(r, obs-r))+
+            # plot observed value
+            geom_line(colour=c("#4d4d4d"))+
+            geom_line(aes(r,theo-r), colour="red", linetype = "dashed")+
+            # plot simulation envelopes
+            geom_ribbon(aes(ymin=lo-r,ymax=hi-r),alpha=0.1, colour=c("#91bfdb")) +
+            xlab("Distance r (m)") +
+            ylab(c) +
+            geom_rug(data=klfunc_df[klfunc_df$obs > klfunc_df$hi,], sides="b", colour=colour[1])  +
+            geom_rug(data=klfunc_df[klfunc_df$obs < klfunc_df$lo,], sides="b", colour=colour[2]) +
+            geom_rug(data=klfunc_df[klfunc_df$obs >= klfunc_df$lo & klfunc_df$obs <= klfunc_df$hi,], sides="b", color=colour[3]) +
+            theme_tufte()
           
+          text1<-"Significant clustering"
+          text2<-"Significant segregation"
+          text3<-"Not significant clustering/segregation"
+          
+          # the below conditional statement is required to ensure that the labels (text1/2/3) are assigned to the correct traces
+          if (nrow(klfunc_df[klfunc_df$obs > klfunc_df$hi,])==0){ 
+            if (nrow(Lcsr_df[klfunc_df$obs < klfunc_df$lo,])==0){ 
+              ggplotly(csr_plot, dynamicTicks=T) %>%
+                style(text = text3, traces = 4) %>%
+                rangeslider() 
+            }else if (nrow(klfunc_df[klfunc_df$obs >= klfunc_df$lo & klfunc_df$obs <= klfunc_df$hi,])==0){ 
+              ggplotly(csr_plot, dynamicTicks=T) %>%
+                style(text = text2, traces = 4) %>%
+                rangeslider() 
+            }else {
+              ggplotly(csr_plot, dynamicTicks=T) %>%
+                style(text = text2, traces = 4) %>%
+                style(text = text3, traces = 5) %>%
+                rangeslider() 
+            }
+          } else if (nrow(klfunc_df[klfunc_df$obs < klfunc_df$lo,])==0){
+            if (nrow(klfunc_df[klfunc_df$obs >= klfunc_df$lo & klfunc_df$obs <= klfunc_df$hi,])==0){
+              ggplotly(csr_plot, dynamicTicks=T) %>%
+                style(text = text1, traces = 4) %>%
+                rangeslider() 
+            } else{
+              ggplotly(csr_plot, dynamicTicks=T) %>%
+                style(text = text1, traces = 4) %>%
+                style(text = text3, traces = 5) %>%
+                rangeslider()
+            }
+          } else{
+            ggplotly(csr_plot, dynamicTicks=T) %>%
+              style(text = text1, traces = 4) %>%
+              style(text = text2, traces = 5) %>%
+              style(text = text3, traces = 6) %>%
+              rangeslider()
+          }
+          
+    
         })
       }) 
       
@@ -619,7 +675,7 @@ server <- function(input, output) {
       #=============================================================================
       #NetKDE K Function
       observeEvent(input$NetKDE_Kfunc_run, {
-        output$NetKDE_Kfunction <- renderPlot({
+        output$NetKDE_Kfunction <- renderPlotly({
           req(Healthcare_filtered(), Variable_filtered(), Network_filtered(), Studyarea_filtered())
           H <- Healthcare_filtered()
           N <- Network_filtered()
@@ -634,13 +690,64 @@ server <- function(input, output) {
                                       verbose = FALSE,
                                       digits = 10,
                                       conf_int = input$conf)
-          kfun_hospital$plotk
+          kfun_df <- data.frame(kfun_hospital$values)
+          colour=c("#0D657D","#ee770d","#D3D3D3")
+          csr_plot <- ggplot(kfun_df, aes(distances, obs_k))+
+            # plot observed value
+            geom_line(colour=c("#4d4d4d"))+
+            # plot simulation envelopes
+            geom_ribbon(aes(ymin=lower_k,ymax=upper_k),alpha=0.1, colour=c("#91bfdb")) +
+            xlab("Distance (m)") +
+            ylab("Empirical K-function") +
+            geom_rug(data=kfun_df[kfun_df$obs_k > kfun_df$upper_k,], sides="b", colour=colour[1])  +
+            geom_rug(data=kfun_df[kfun_df$obs_k < kfun_df$lower_k,], sides="b", colour=colour[2]) +
+            geom_rug(data=kfun_df[kfun_df$obs_k >= kfun_df$lower_k & kfun_df$obs_k <= kfun_df$upper_k,], sides="b", color=colour[3]) +
+            theme_tufte()
+          
+          text1<-"Significant clustering"
+          text2<-"Significant segregation"
+          text3<-"Not significant clustering/segregation"
+          
+          # the below conditional statement is required to ensure that the labels (text1/2/3) are assigned to the correct traces
+          if (nrow(kfun_df[kfun_df$obs_k > kfun_df$upper_k,])==0){ 
+            if (nrow(kfun_df[kfun_df$obs_k < kfun_df$lower_k,])==0){ 
+              ggplotly(csr_plot, dynamicTicks=T) %>%
+                style(text = text3, traces = 4) %>%
+                rangeslider() 
+            }else if (nrow(kfun_df[kfun_df$obs_k >= kfun_df$lower_k & kfun_df$obs_k <= kfun_df$upper_k,])==0){ 
+              ggplotly(csr_plot, dynamicTicks=T) %>%
+                style(text = text2, traces = 4) %>%
+                rangeslider() 
+            }else {
+              ggplotly(csr_plot, dynamicTicks=T) %>%
+                style(text = text2, traces = 4) %>%
+                style(text = text3, traces = 5) %>%
+                rangeslider() 
+            }
+          } else if (nrow(kfun_df[kfun_df$obs_k < kfun_df$lower_k,])==0){
+            if (nrow(kfun_df[kfun_df$obs_k >= kfun_df$lower_k & kfun_df$obs_k <= kfun_df$upper_k,])==0){
+              ggplotly(csr_plot, dynamicTicks=T) %>%
+                style(text = text1, traces = 4) %>%
+                rangeslider() 
+            } else{
+              ggplotly(csr_plot, dynamicTicks=T) %>%
+                style(text = text1, traces = 4) %>%
+                style(text = text3, traces = 5) %>%
+                rangeslider()
+            }
+          } else{
+            ggplotly(csr_plot, dynamicTicks=T) %>%
+              style(text = text1, traces = 4) %>%
+              style(text = text2, traces = 5) %>%
+              style(text = text3, traces = 6) %>%
+              rangeslider()
+          }
         })
       })
       #=============================================================================
       # Net KDE Kcross
       observeEvent(input$NetKDE_Kcross_run, {
-        output$NetKDE_Kcross <- renderPlot({
+        output$NetKDE_Kcross <- renderPlotly({
           req(Healthcare_filtered(), Variable_filtered(), Network_filtered(), Studyarea_filtered())
           H <- Healthcare_filtered()
           V <- Variable_filtered()
@@ -655,7 +762,59 @@ server <- function(input, output) {
                                                nsim = input$N_SIM,
                                                agg = 100,
                                                conf_int = input$conf)
-          crossfun_hospital$plotk
+          crossfun_df <- data.frame(crossfun_hospital$values)
+          colour=c("#0D657D","#ee770d","#D3D3D3")
+          csr_plot <- ggplot(crossfun_df, aes(distances, obs_k))+
+            # plot observed value
+            geom_line(colour=c("#4d4d4d"))+
+            # plot simulation envelopes
+            geom_ribbon(aes(ymin=lower_k,ymax=upper_k),alpha=0.1, colour=c("#91bfdb")) +
+            xlab("Distance (m)") +
+            ylab("Empirical Kcross-function") +
+            geom_rug(data=crossfun_df[crossfun_df$obs_k > crossfun_df$upper_k,], sides="b", colour=colour[1])  +
+            geom_rug(data=crossfun_df[crossfun_df$obs_k < crossfun_df$lower_k,], sides="b", colour=colour[2]) +
+            geom_rug(data=crossfun_df[crossfun_df$obs_k >= crossfun_df$lower_k & crossfun_df$obs_k <= crossfun_df$upper_k,], sides="b", color=colour[3]) +
+            theme_tufte()
+          
+          text1<-"Significant clustering"
+          text2<-"Significant segregation"
+          text3<-"Not significant clustering/segregation"
+          
+          # the below conditional statement is required to ensure that the labels (text1/2/3) are assigned to the correct traces
+          if (nrow(crossfun_df[crossfun_df$obs_k > crossfun_df$upper_k,])==0){ 
+            if (nrow(crossfun_df[crossfun_df$obs_k < crossfun_df$lower_k,])==0){ 
+              ggplotly(csr_plot, dynamicTicks=T) %>%
+                style(text = text3, traces = 4) %>%
+                rangeslider() 
+            }else if (nrow(crossfun_df[crossfun_df$obs_k >= crossfun_df$lower_k & crossfun_df$obs_k <= crossfun_df$upper_k,])==0){ 
+              ggplotly(csr_plot, dynamicTicks=T) %>%
+                style(text = text2, traces = 4) %>%
+                rangeslider() 
+            }else {
+              ggplotly(csr_plot, dynamicTicks=T) %>%
+                style(text = text2, traces = 4) %>%
+                style(text = text3, traces = 5) %>%
+                rangeslider() 
+            }
+          } else if (nrow(crossfun_df[crossfun_df$obs_k < crossfun_df$lower_k,])==0){
+            if (nrow(crossfun_df[crossfun_df$obs_k >= crossfun_df$lower_k & crossfun_df$obs_k <= crossfun_df$upper_k,])==0){
+              ggplotly(csr_plot, dynamicTicks=T) %>%
+                style(text = text1, traces = 4) %>%
+                rangeslider() 
+            } else{
+              ggplotly(csr_plot, dynamicTicks=T) %>%
+                style(text = text1, traces = 4) %>%
+                style(text = text3, traces = 5) %>%
+                rangeslider()
+            }
+          } else{
+            ggplotly(csr_plot, dynamicTicks=T) %>%
+              style(text = text1, traces = 4) %>%
+              style(text = text2, traces = 5) %>%
+              style(text = text3, traces = 6) %>%
+              rangeslider()
+          }
+          
         })
       })
       # End of NetKDE section.
