@@ -2,4 +2,16 @@
 title: "About"
 ---
 
-This is our project site.
+# T10 members
+
+## Teo Jun Hao
+
+![](images/JH.png){width="388"}
+
+## How Xin Yee
+
+![](images/XY.png){width="396"}
+
+## Sherry Ng
+
+![](images/S.png){width="398"}
