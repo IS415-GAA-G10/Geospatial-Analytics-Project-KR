@@ -19,9 +19,7 @@ website:
 
 format:
   html:
-    theme: Sandstone
-    css: styles.css
-    toc: true
+    theme: [Sandstone, style.scss]
 
 editor: visual
 
