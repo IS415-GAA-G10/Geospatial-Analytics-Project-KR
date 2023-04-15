@@ -129,7 +129,7 @@ ui <- navbarPage("Hospital Playlist",
                           sidebarLayout(position = 'left',
                                         sidebarPanel(fluid = TRUE, width = 3,
                                                      conditionalPanel(
-                                                       'input.SPPA === "First-Spatial Point Pattern KDE Visualization"',
+                                                       'input.SPPA === "Spatial Point Pattern KDE Visualization"',
                                                        tags$strong("Spatial Point Pattern Variable Inputs"),
                                                        numericInput(inputId = "crs",
                                                                     label = "Input the coordinate reference system (CRS)",
@@ -175,11 +175,50 @@ ui <- navbarPage("Hospital Playlist",
                                         mainPanel(width = 9,
                                                   tabsetPanel(
                                                     id = "SPPA",
-                                                    tabPanel("First-Spatial Point Pattern KDE Visualization",
-                                                             tmapOutput("SPPA1_output")
+                                                    tabPanel("Spatial Point Pattern KDE Visualization",
+                                                             tmapOutput("SPPA1_output"),
+                                                             tabsetPanel(
+                                                               id = "SPPA_info",
+                                                               tabPanel("About Spatial Point Pattern",
+                                                                        column(12,
+                                                                               h2("What is Spatial Point Pattern Kernel Density Estimation ?"),
+                                                                               h5("Spatial point pattern kernel density estimation is a technique used in spatial statistics 
+                                                                                  to estimate the intensity or density of point events or occurrences in a spatial domain. 
+                                                                                  It involves smoothing the observed point pattern data to create a continuous surface or map
+                                                                                  that represents the estimated density of points at different locations in the study area. "),
+                                                                               h5("Kernel density estimation uses a kernel, which is a mathematical function, to spread the 
+                                                                               influence of each point event or occurrence across its neighboring area. The kernel function 
+                                                                               determines the shape, size, and orientation of the smoothing window around each point, and 
+                                                                               the density estimate at a particular location is calculated as the sum of the weighted 
+                                                                               contributions from all the points in the study area."),
+                                                                               h2("How to interpret the output?"),
+                                                                               h5("The darker the color, the higher the relative density of the point features as compared 
+                                                                                  to lighter color (meaning lower density).")
+                                                                        )))
                                                     ),
                                                     tabPanel("K & L Function",
-                                                             plotlyOutput("KL_output")
+                                                             plotlyOutput("KL_output"),
+                                                             tabsetPanel(
+                                                               id = "SPPA_info",
+                                                               tabPanel("About K and L function",
+                                                                        column(12,
+                                                                               h2("What is K function?"),
+                                                                               h5("k function calculates for a radius r the proportion of cells with a value below r 
+                                                                                  in the distance matrix between all the points Did. The K function estimates 
+                                                                                  'the average number of neighbours of a typical random point'. "),
+                                                                               
+                                                                               h2("What is L function?"),
+                                                                               h5("L Function is a summary statistic that provides information on the expected number of points within a certain 
+                                                                                  distance of other points, which can help identify patterns of point interactions, repulsions, 
+                                                                                  or regularity in the point pattern data."),
+                                                                               h2("How to interpret the output?"),
+                                                                               h5("- Observed K(r) or L(r) values below the envelope indicate lower than exprected density at radius r, i.e., significant sparseness."),
+                                                                               h5("- Observed K(r) or L(r) values within the envelope indicate no significant deviation from sparseness."),
+                                                                               h5("- Observed K(r) or L(r) values above the envelope indicate higher than exprected density at radius  r, i.e., significant clustering."),
+                                                                               
+                                                                               
+                                                                              
+                                                                        )))
                                                     )
                                                   )
                                         )
