@@ -33,7 +33,7 @@ Network-Constrained Point Patterns Analysis helps users identify whether the dis
 
 # Design Implementation
 
-\<screenshot of the shiny app\>
+![](images/app.png){fig-align="center"}
 
 # Methods 1 - Spatial Point Patterns
 

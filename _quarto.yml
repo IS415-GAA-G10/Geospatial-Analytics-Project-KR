@@ -10,6 +10,7 @@ website:
     - text: "Research Paper"
       href: "Research_Paper.html"
     - text: "Rshiny Application"
+      href: "https://junhaoteo.shinyapps.io/Test_gaa/"
     right: 
       - href: index.qmd
         text: Home
