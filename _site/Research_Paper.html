@@ -8,7 +8,7 @@
 
 <meta name="dcterms.date" content="2023-04-06">
 
-<title>IS415-GAA-Project - Research_Paper</title>
+<title>IS415-GAA-Project - Research Paper: Hospital Playlist, a Rshiny Application on various Spatial Point Pattern Analysis Techniques</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -21,69 +21,6 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1.6em;
   vertical-align: middle;
 }
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-    color: #aaaaaa;
-  }
-pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-}
-code span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code span.at { color: #7d9029; } /* Attribute */
-code span.bn { color: #40a070; } /* BaseN */
-code span.bu { color: #008000; } /* BuiltIn */
-code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code span.ch { color: #4070a0; } /* Char */
-code span.cn { color: #880000; } /* Constant */
-code span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code span.dt { color: #902000; } /* DataType */
-code span.dv { color: #40a070; } /* DecVal */
-code span.er { color: #ff0000; font-weight: bold; } /* Error */
-code span.ex { } /* Extension */
-code span.fl { color: #40a070; } /* Float */
-code span.fu { color: #06287e; } /* Function */
-code span.im { color: #008000; font-weight: bold; } /* Import */
-code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
-code span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code span.op { color: #666666; } /* Operator */
-code span.ot { color: #007020; } /* Other */
-code span.pp { color: #bc7a00; } /* Preprocessor */
-code span.sc { color: #4070a0; } /* SpecialChar */
-code span.ss { color: #bb6688; } /* SpecialString */
-code span.st { color: #4070a0; } /* String */
-code span.va { color: #19177c; } /* Variable */
-code span.vs { color: #4070a0; } /* VerbatimString */
-code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
 </style>
 
 
@@ -151,7 +88,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
  <span class="menu-text">Research Paper</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="https://junhaoteo.shinyapps.io/Test_gaa/">
+    <a class="nav-link" href="https://junhaoteo.shinyapps.io/is415_gaa_Hospital_Playlist/">
  <span class="menu-text">Rshiny Application</span></a>
   </li>  
 </ul>
@@ -180,7 +117,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Research_Paper</h1>
+<h1 class="title">Research Paper: Hospital Playlist, a Rshiny Application on various Spatial Point Pattern Analysis Techniques</h1>
 </div>
 
 
@@ -198,7 +135,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     <div>
     <div class="quarto-title-meta-heading">Modified</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">April 15, 2023</p>
+      <p class="date-modified">April 16, 2023</p>
     </div>
   </div>
     
@@ -212,37 +149,100 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>The availability of healthcare facilities, such as hospitals, is essential to guarantee equal access to medical services for all individuals, irrespective of their socio-economic status or geographical location. In South Korea, there is mounting evidence that suggests the presence of inequalities in access to hospitals or clinics, with certain populations and regions facing greater challenges in obtaining necessary healthcare services. The primary objective of this study is to identify the regions in South Korea that have limited access to hospitals. Our analysis of spatial data has allowed us to detect patterns and trends in hospital and clinic accessibility. We have come out with a user-friendly application designed to bridge the gap between geospatial analysis and ease of use.</p>
 <p>The platform is specifically tailored to support non-technical users with a particular type of geospatial analysis called Point Pattern Analysis. Our application offers support for two types of Point Pattern Analysis: Spatial Point Patterns Analysis and Network-Constrained Point Patterns Analysis.</p>
 <p>Spatial Point Patterns Analysis helps users determine whether the point distribution in their dataset resembles spatial randomness or exhibits a regular or clustered pattern. It can also identify dependencies between two input dataset point distributions.</p>
+<p>Co-location Analysis helps users determine the spatial relationship between the location of 2 variables and assess their spatial dependence.</p>
 <p>Network-Constrained Point Patterns Analysis helps users identify whether the distribution of spatial point events occurring on or alongside networks shows spatial randomness or a regular/clustered pattern.</p>
 </section>
 <section id="motivation-of-the-application" class="level1" data-number="2">
 <h1 data-number="2"><span class="header-section-number">2</span> Motivation of the application</h1>
 <ul>
-<li><p>To allow the end-user to use our model to identify areas with low healthcare accessibility.</p></li>
-<li><p>Developed an application to illustrate different scenarios of clinical and healthcare setting to aid improving healthcare accessibility in South Korea.</p></li>
-<li><p>Show the difference between the conventional and Network Constrained Spatial Point Analysis</p></li>
+<li><p>To allow the end-user to use our model to identify areas with low healthcare accessibility in any country through various Spatial Point Pattern Analysis techniques.</p></li>
+<li><p>To visualize the density of point patterns on internet-based maps such as OpenStreetMap.</p></li>
+<li><p>Show the difference between the conventional and Network Constrained Spatial Point Analysis.</p></li>
 <li><p>Serve as an educational tool on the different types of Spatial Point analysis.</p></li>
 </ul>
 </section>
 <section id="design-implementation" class="level1" data-number="3">
 <h1 data-number="3"><span class="header-section-number">3</span> Design Implementation</h1>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="images/app.png" class="img-fluid figure-img"></p>
-</figure>
-</div>
+<ul>
+<li>About Us Tab</li>
+</ul>
+<p><img src="User Interface/AboutUs.png" class="img-fluid" width="3128"></p>
+<ul>
+<li>Data Import Tab</li>
+</ul>
+<p><img src="User Interface/DataImport.png" class="img-fluid"></p>
+<ul>
+<li>SPPA Tab</li>
+</ul>
+<p><img src="User Interface/SPPA.png" class="img-fluid"></p>
+<p><img src="User Interface/SPPA_K.png" class="img-fluid"></p>
+<ul>
+<li>Co-Location Tab</li>
+</ul>
+<p><img src="User Interface/Co-Location.png" class="img-fluid"></p>
+<ul>
+<li>Network Constrained SPPA</li>
+</ul>
+<p><img src="User Interface/NetKDE_V.png" class="img-fluid"></p>
+<p><img src="User Interface/NetKDE_K.png" class="img-fluid"></p>
+<p><img src="User Interface/NetKDE_Kcross.png" class="img-fluid"></p>
 </section>
-<section id="methods-1---spatial-point-patterns" class="level1" data-number="4">
-<h1 data-number="4"><span class="header-section-number">4</span> Methods 1 - Spatial Point Patterns</h1>
-<section id="first-spatial-point-analysis" class="level3" data-number="4.0.1">
-<h3 data-number="4.0.1" class="anchored" data-anchor-id="first-spatial-point-analysis"><span class="header-section-number">4.0.1</span> First-Spatial Point Analysis</h3>
+<section id="packages-used-in-the-application" class="level1" data-number="4">
+<h1 data-number="4"><span class="header-section-number">4</span> Packages used in the application</h1>
+<ul>
+<li><p>Shiny Application UI and server</p>
+<p>Helps with UI design and other icons to make the app interactive.</p>
+<ul>
+<li><p>shiny</p></li>
+<li><p>shinythemes</p></li>
+<li><p>shinycssloaders</p></li>
+<li><p>shinyWidgets</p></li>
+</ul></li>
+<li><p>Visualization</p>
+<p>Helps with visualizing geographical maps and statistical plots.</p>
+<ul>
+<li><p>tmap</p></li>
+<li><p>leaflet</p></li>
+<li><p>ggplot2</p></li>
+<li><p>ggthemes</p></li>
+<li><p>plotly</p></li>
+</ul></li>
+<li><p>Spatial Data wrangling</p>
+<p>Helps with reading rds files, filtering columns and providing the necessary functions to perform the various SPPA techniques.</p>
+<ul>
+<li><p>readr</p></li>
+<li><p>sf</p></li>
+<li><p>tidyverse</p></li>
+<li><p>rgdal</p></li>
+<li><p>spNetwork</p></li>
+<li><p>spatstat</p></li>
+<li><p>raster</p></li>
+<li><p>sfdep</p></li>
+</ul></li>
+</ul>
+</section>
+<section id="data-wrangling" class="level1" data-number="5">
+<h1 data-number="5"><span class="header-section-number">5</span> Data Wrangling</h1>
+<p>The main focus of our application is to allow users to perform the various SPPA techniques without needing to have the extensive knowledge on programming. Hence, our application has to allow users to input their own dataset in order to perform an analysis of their interest. As geospatial data can appear in many forms, for example, in shapefiles, geoJson and csv file, it would best to standardize it. This would mean some knowledge on data wrangling is required.</p>
+<p>For the purpose of creating our application, we obtained Seoul’s data pertaining to locations of hospitals, residential areas, road networks and the Seoul study area.</p>
+<p>Firstly, we ensured that datasets are in the correct EPSG Coordinate reference system. This is done by using the function st_transform() from the sf package. Also ensure that the geometry are valid and missing data are omitted. Wrangle the data and extract only the columns that you need and the format of the final wrangled data sets can be found in our userguide for the application.</p>
+<p>Finally, save the final datasets in the rds format using the write_rds() function. These datasets can then be inputted into our application for your analysis.</p>
+<p>By standardizing the format in this manner ensures consistency and minimal knowledge on spatial data wrangling required for user to fully use our application functions.</p>
+</section>
+<section id="methodology" class="level1" data-number="6">
+<h1 data-number="6"><span class="header-section-number">6</span> Methodology</h1>
+<section id="methods-1---spatial-point-patterns" class="level2" data-number="6.1">
+<h2 data-number="6.1" class="anchored" data-anchor-id="methods-1---spatial-point-patterns"><span class="header-section-number">6.1</span> Methods 1 - Spatial Point Patterns</h2>
+<section id="first-spatial-point-analysis" class="level3" data-number="6.1.1">
+<h3 data-number="6.1.1" class="anchored" data-anchor-id="first-spatial-point-analysis"><span class="header-section-number">6.1.1</span> First-Spatial Point Analysis</h3>
 <p>Given a kernel, a smaller bandwidth tends to lead to an undersmoothed density estimate that may contain many spurious noises (i.e., peaks and valleys), and a larger bandwidth tends to result in an oversmoothed density estimate that may hide some interesting underlying structure. Therefore, choosing an optimal bandwidth for a dataset is important.</p>
 <p>Based on the results, we have decided to choose bw.ppl because it seems to be the most optimal among the rest of the bandwidth. We will also use gaussian in this project because it is most recommended among others.</p>
 <p>With the kernel density map, denser areas with a heavier distribution of clinics and hospital are easily spotted.</p>
 <p>We can see from application that gangnam-gu is heavily concentrated for clinics whereas for hospital, we can see that there are 2 areas that is highly concentrated, Jung-gu and yeongdeungpo-gu.</p>
 <p>This is because the kernel density z-estimate helps to smooth out the points in a given area - a much larger ‘smoothing effect’ than point density, which in turn is helped by the visualisation that kernel density maps have: its range for distributions concentrations is clearly indicated by the gradient of colour - in my case, ranging from yellow to brown for the different bands. Compare this against the individual points in a point map (on the left), which at most shows concentration of certain areas, but makes it hard for the viewer to comprehensively compare the distributions of different regions.</p>
 </section>
-<section id="second-point-pattern-analysis" class="level3" data-number="4.0.2">
-<h3 data-number="4.0.2" class="anchored" data-anchor-id="second-point-pattern-analysis"><span class="header-section-number">4.0.2</span> Second-Point Pattern Analysis</h3>
+<section id="second-point-pattern-analysis" class="level3" data-number="6.1.2">
+<h3 data-number="6.1.2" class="anchored" data-anchor-id="second-point-pattern-analysis"><span class="header-section-number">6.1.2</span> Second-Point Pattern Analysis</h3>
 <p>In this application, we have used K and L function.</p>
 <p>K function is a statistical method used to test for clustering or dispersion of points in a spatial region. It compares the observed distribution of points to a null model of complete spatial randomness.</p>
 <p>We have run the 39 number trials (nsim) in the code chunk and based on the results we have observed that K(r) is far above the K(theo) as well as the envelope - indicating that clinics in Seoul area are very clustered as compared to hospital. Hence, we reject the null hypothesis that both clinic and hospital in Seoul area are randomly distributed at 95% confident interval</p>
@@ -250,46 +250,37 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>If the black line representing the observed L-function is above the envelope, it suggests that the point pattern exhibits clustering. In other words, the observed number of points within a certain distance of each other is higher than what we would expect if the points were randomly distributed in the region. Based on the results, for Hospital at Seoul is shown to be more than 0, but lies within the randomization envelope for distances above 5km. This shows that there is no statistically significant clustering and is randomly distributed at distances above 5km.</p>
 </section>
 </section>
-<section id="methods-2---co-location-analysis" class="level1" data-number="5">
-<h1 data-number="5"><span class="header-section-number">5</span> Methods 2 - Co-location Analysis</h1>
+<section id="methods-2" class="level2" data-number="6.2">
+<h2 data-number="6.2" class="anchored" data-anchor-id="methods-2"><span class="header-section-number">6.2</span> Methods 2</h2>
+<section id="co-location-analysis" class="level3" data-number="6.2.1">
+<h3 data-number="6.2.1" class="anchored" data-anchor-id="co-location-analysis"><span class="header-section-number">6.2.1</span> Co-location Analysis</h3>
 <p>Co-location analysis between residential buildings and Hospitals in Seoul</p>
 <p><img src="images/hospitals_colocation.png" class="img-fluid"></p>
 <p>Co-location analysis between residential buildings and Clinics in Seoul</p>
 <p><img src="images/clinics_colocation.png" class="img-fluid"></p>
-<p>LCLQ values can be used to determine the spatial relationship between the location of clinics and residential buildings. In this case, point-based approach is used. For points marked with the value 1 (in yellow), it indicates that there is a hospital/clinic as a nearest neighbour. Those with no access or low access to clinics/hospitals, the points are displayed in pink.</p>
+<p>LCLQ values can be used to determine the spatial relationship between the location of hospital and residential buildings. In this case, point-based approach is used. For points marked with the value 1 (in yellow), it indicates that there is a hospital/clinic as a nearest neighbour. Those with no access or low access to clinics/hospitals, the points are displayed in pink.</p>
 <p>LCLQ also adopts distance ranks adaptive bandwidth, and ensures that exactly the same number of points is involved in the estimation of LCLQ at each marked point, returning more robust and reliable results.</p>
 <p>Given the high rate of healthcare needed for the Korean populations, accessibility to hospitals and clinics are vital especially during needs of emergencies. Hence, with this colocation analysis, residents will be able to add this consideration before deciding their area of residence. In contrast, staying within the vicinity of hospitals and clinics can have cons as well, such as having heavier traffic and presence of higher noise levels. For infectious diseases, the chances of spreading will be higher. However, if benefits outweigh cons, it will still be more ideal to have better access to medical facilities.</p>
 </section>
-<section id="methods-3---network-constrained-spatial-point-analysis" class="level1" data-number="6">
-<h1 data-number="6"><span class="header-section-number">6</span> Methods 3 - Network Constrained Spatial Point Analysis</h1>
+</section>
+<section id="methods-3---network-constrained-spatial-point-analysis" class="level2" data-number="6.3">
+<h2 data-number="6.3" class="anchored" data-anchor-id="methods-3---network-constrained-spatial-point-analysis"><span class="header-section-number">6.3</span> Methods 3 - Network Constrained Spatial Point Analysis</h2>
 <p>To illustrate this method, we decided to narrow down to the Gu level. We used Gangnam-Gu as our study area in this research paper.</p>
-<section id="network-kernal-density-estimate-visualization" class="level2" data-number="6.1">
-<h2 data-number="6.1" class="anchored" data-anchor-id="network-kernal-density-estimate-visualization"><span class="header-section-number">6.1</span> <strong>Network Kernal Density Estimate Visualization</strong></h2>
+<section id="network-kernal-density-estimate-visualization" class="level3" data-number="6.3.1">
+<h3 data-number="6.3.1" class="anchored" data-anchor-id="network-kernal-density-estimate-visualization"><span class="header-section-number">6.3.1</span> <strong>Network Kernal Density Estimate Visualization</strong></h3>
 <p>In calculating the kernel density, we used the “simple” method to calculate the network kernal density estimate.</p>
-<div class="cell">
-<details>
-<summary>Show code</summary>
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tmap_mode</span>(<span class="st">'view'</span>)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(lixels)<span class="sc">+</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_lines</span>(<span class="at">col=</span><span class="st">"density"</span>,</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">palette =</span> <span class="st">"Reds"</span>) <span class="sc">+</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(Hospital_Points) <span class="sc">+</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_dots</span>(<span class="at">col =</span> <span class="st">"blue"</span>,</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>          <span class="at">size =</span><span class="fl">0.01</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-</div>
 <p><img src="images/NETKDE_visual.png" class="img-fluid"></p>
 <p>The interactive map above effectively reveals road segments (darker color) with relatively higher density of hospitals than road segments with relatively lower density of hospitals (lighter color).</p>
 </section>
-<section id="network-constrained-k-function-analysis" class="level2" data-number="6.2">
-<h2 data-number="6.2" class="anchored" data-anchor-id="network-constrained-k-function-analysis"><span class="header-section-number">6.2</span> N<strong>etwork Constrained K-Function Analysis</strong></h2>
+<section id="network-constrained-k-function-analysis" class="level3" data-number="6.3.2">
+<h3 data-number="6.3.2" class="anchored" data-anchor-id="network-constrained-k-function-analysis"><span class="header-section-number">6.3.2</span> N<strong>etwork Constrained K-Function Analysis</strong></h3>
 <p>Null hypothesis:</p>
 <p>The observed spatial point events (i.e distribution of hospitals) are uniformly distributed over a street network in Gangnam-Gu Area.</p>
 <p><img src="images/NetKDE_K.png" class="img-fluid"></p>
 <p>The blue line is the empirical network K-function of the hospital points in Gangnam-Gu. The gray envelop represents the results of the 50 simulations in the interval 2.5% - 97.5%. We notice that the blue line is within the gray envelope suggesting that the observed spatial point events (distribution of hospitals) are uniformly distributed over a street network in Gangnam-Gu Area.</p>
 </section>
-<section id="network-constrained-k-cross-function-analysis" class="level2" data-number="6.3">
-<h2 data-number="6.3" class="anchored" data-anchor-id="network-constrained-k-cross-function-analysis"><span class="header-section-number">6.3</span> <strong>Network Constrained K-Cross Function Analysis</strong></h2>
+<section id="network-constrained-k-cross-function-analysis" class="level3" data-number="6.3.3">
+<h3 data-number="6.3.3" class="anchored" data-anchor-id="network-constrained-k-cross-function-analysis"><span class="header-section-number">6.3.3</span> <strong>Network Constrained K-Cross Function Analysis</strong></h3>
 <p>Null Hypothesis: The two types of points resemble random distribution and are independent of each other.</p>
 <p>Seeing that there are only a few hospital within Gangnam-Gu, the K-cross function results is to be expected and as such, the K-cross function helps to identify variables that may be related to the hospital locations. For example, we used residential points so as to see whether residents in Gangnam-Gu are clustered near the hospital points. This helps us identify whether there is spatial dependence between hospitals and residence.</p>
 <p><img src="images/NetKDE_Kcross.png" class="img-fluid"></p>
@@ -299,9 +290,16 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>If it is below, we can conclude the two types of points resemble random distribution and are independent from each other.</p>
 </section>
 </section>
+</section>
 <section id="future-work" class="level1" data-number="7">
 <h1 data-number="7"><span class="header-section-number">7</span> Future Work</h1>
 <p>To improve our scope of the research if we were given the time, we can further expand the analysis to whole of Korea, to find out the areas who have inadequate access to medical facilities currently and the government of Korea can consider improving the medical accessibility in those areas in order to increase the livability and quality of lives of the residents there. We can also conduct further data collection by categorising the type of hospitals and clinics and classifying them in terms of their specialisation, so residents can select which hospitals or clinics to visit to tailor to their needs.</p>
+</section>
+<section id="conclusion" class="level1" data-number="8">
+<h1 data-number="8"><span class="header-section-number">8</span> Conclusion</h1>
+<p>In this paper, we have provided our motivation and goal for our application. We hope that our app would help users with minimal background in programming explore the Point Pattern analysis (PPA) with ease and gain insights for their studies or research objectives.</p>
+<p>While our application is designed around the topic on network accessibility of healthcare facilities, it can also be used for other purposes. As long as the user follows the format for the input data sets, the application is still able to perform PPA on other topics.</p>
+<p>In addition, our application is an open-source web-based tool, created using R and shiny. Since R is known as a programming language made by statisticians for statisticians, we hope that this application can value add to the R programming community and as an education tool for learning the various types of spatial point pattern analysis.</p>
 
 
 </section>

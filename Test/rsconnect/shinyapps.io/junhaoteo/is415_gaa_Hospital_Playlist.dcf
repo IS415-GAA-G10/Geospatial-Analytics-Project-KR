@@ -1,0 +1,14 @@
+name: is415_gaa_Hospital_Playlist
+title: is415_gaa_Hospital_Playlist
+username:
+account: junhaoteo
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 8863710
+bundleId: 7095020
+url: https://junhaoteo.shinyapps.io/is415_gaa_Hospital_Playlist/
+when: 1681627443.85679
+lastSyncTime: 1681627443.8568
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: sherry_app.R|www/.DS_Store
