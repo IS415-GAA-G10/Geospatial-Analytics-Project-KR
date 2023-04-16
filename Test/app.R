@@ -15,6 +15,7 @@ library(sfdep)
 library(ggplot2) 
 library(plotly) 
 library(ggthemes)
+library(shinyWidgets)
 options(shiny.maxRequestSize = 30*1024^2)
 
 ui <- navbarPage("Hospital Playlist",
@@ -24,6 +25,13 @@ ui <- navbarPage("Hospital Playlist",
                           fluidPage(
                             sidebarLayout(
                               sidebarPanel(
+                                id = "sidebar_panel",
+                                style = "background-color: inherit;",
+                                tags$div(style = "position: relative; text-align: left; z-index: 1000;",
+                                         switchInput("mode_toggle", "Switch mode:", value = FALSE, onLabel = "Light", offLabel = "Dark")),
+                                tags$br(), 
+                                tags$br(),
+                                img(src = "SMU_logo.png", style = "width: 100%;"),
                                 h2(strong("Spatial Point Pattern Analysis by Team 1")),
                                 tags$ul(
                                   tags$li("Teo Jun Hao", style = "font-size:150%"),
@@ -32,7 +40,8 @@ ui <- navbarPage("Hospital Playlist",
                                 ),
                                 h2(strong("Guided by:")),
                                 tags$li("Professor Kam Tin Seong (SMU IS415)", style = "font-size:150%"),
-                                width = 3
+                                width = 3,
+                                uiOutput("custom_css"),
                               ),
                               mainPanel(
                                 h2(strong("Problem Statement")),
@@ -60,26 +69,25 @@ ui <- navbarPage("Hospital Playlist",
                                     tags$ul(
                                       tags$li("Visualisation of variable points"),
                                       tags$li("Kernel Density Plots"),
-                                      tags$li("G, K, L Function plots and analysis"))),
+                                      tags$li("K & L Function plots and analysis"))),
+                                  tags$li(
+                                    style = "font-size: 150%",
+                                    strong("Co-Location Analysis"),
+                                    tags$ul(
+                                      tags$li("Visualisation of Local Co-Location Points"),
+                                      tags$li("Co-Location Statistical Interpretation"))),
                                   tags$li(
                                     style = "font-size: 150%",
                                     strong("Network Constrained Spatial Point Analysis"),
                                     tags$ul(
                                       tags$li("Visualisation of NetKDE"),
                                       tags$li("Network Constrained K Function Analysis"),
-                                      tags$li("Network Constrained K-cross Function Analysis"))),
-                                  tags$li(
-                                    style = "font-size: 150%",
-                                    strong("Co-Location Analysis"),
-                                    tags$ul(
-                                      tags$li("Visualisation of Local Co-Location Points"),
-                                      tags$li("Co-Location Statistical Interpretation")))
+                                      tags$li("Network Constrained K-cross Function Analysis")))
                                 ),
                                 h2(strong("Requirements")),
                                 hr(),
                                 span("Do note that data wrangling should also be done before uploading the files into the application.
                                       Loading of .rds files are required in order to perform the analysis.
-                                  
                                       Example of .rds files format are as follows: 
                                       ",
                                      
@@ -100,7 +108,9 @@ ui <- navbarPage("Hospital Playlist",
                  ),
                  tabPanel("Data Import", fluid = TRUE, icon=icon("upload"),
                           sidebarLayout(position = 'left',
-                                        sidebarPanel(fluid = TRUE, width = 4,
+                                        sidebarPanel(fluid = TRUE, width = 4, 
+                                                     id = "sidebar_panel",
+                                                     style = "background-color: inherit;",
                                                      tags$strong("RDS Data Import (Healthcare):"),
                                                      tags$br(),
                                                      tags$i("Upload four RDS files"),
@@ -128,14 +138,15 @@ ui <- navbarPage("Hospital Playlist",
                  tabPanel("Conventional Spatial Point Pattern Analysis", fluid = TRUE, icon =icon("map"),
                           sidebarLayout(position = 'left',
                                         sidebarPanel(fluid = TRUE, width = 3,
+                                                     id = "sidebar_panel",
+                                                     style = "background-color: inherit;",
                                                      conditionalPanel(
-                                                       'input.SPPA === "Spatial Point Pattern KDE Visualization"',
+                                                       'input.SPPA === "First-Spatial Point Pattern KDE Visualization"',
                                                        tags$strong("Spatial Point Pattern Variable Inputs"),
                                                        numericInput(inputId = "crs",
                                                                     label = "Input the coordinate reference system (CRS)",
                                                                     min =0,
-                                                                    value =4326,
-                                                                    step =1),
+                                                                    value =4326),
                                                        selectInput(inputId = "SPPA_bw",
                                                                    label = "Select the automatic bandwidth method to be used:",
                                                                    choices = c("bw.diggle()" = "bw.diggle",
@@ -156,15 +167,15 @@ ui <- navbarPage("Hospital Playlist",
                                                      conditionalPanel(
                                                        'input.SPPA === "K & L Function"',
                                                        tags$strong("K & L Function"),
-                                                       numericInput(inputId = "nsim",
-                                                                    label = "Input the appropriate nsim",
-                                                                    min =0,
-                                                                    value =39,
-                                                                    step =1,
-                                                                    max=999),
+                                                       selectInput(inputId = "n_sim",
+                                                                   label = "Choose the significance level",
+                                                                   choices = c("0.01 Significance level" = 99,
+                                                                               "0.05 Significance level" = 39,
+                                                                               "0.10 Significance level" = 18),
+                                                                   selected = 39),
                                                        selectInput(inputId = "KL",
                                                                    label = "Select the function to be used:",
-                                                                   choices = c("Kest" ,
+                                                                   choices = c("Kest",
                                                                                "Lest"),
                                                                    selected = "Kest"),
                                                        actionButton("function_Run", "Run Analysis"),
@@ -175,50 +186,11 @@ ui <- navbarPage("Hospital Playlist",
                                         mainPanel(width = 9,
                                                   tabsetPanel(
                                                     id = "SPPA",
-                                                    tabPanel("Spatial Point Pattern KDE Visualization",
-                                                             tmapOutput("SPPA1_output"),
-                                                             tabsetPanel(
-                                                               id = "SPPA_info",
-                                                               tabPanel("About Spatial Point Pattern",
-                                                                        column(12,
-                                                                               h2("What is Spatial Point Pattern Kernel Density Estimation ?"),
-                                                                               h5("Spatial point pattern kernel density estimation is a technique used in spatial statistics 
-                                                                                  to estimate the intensity or density of point events or occurrences in a spatial domain. 
-                                                                                  It involves smoothing the observed point pattern data to create a continuous surface or map
-                                                                                  that represents the estimated density of points at different locations in the study area. "),
-                                                                               h5("Kernel density estimation uses a kernel, which is a mathematical function, to spread the 
-                                                                               influence of each point event or occurrence across its neighboring area. The kernel function 
-                                                                               determines the shape, size, and orientation of the smoothing window around each point, and 
-                                                                               the density estimate at a particular location is calculated as the sum of the weighted 
-                                                                               contributions from all the points in the study area."),
-                                                                               h2("How to interpret the output?"),
-                                                                               h5("The darker the color, the higher the relative density of the point features as compared 
-                                                                                  to lighter color (meaning lower density).")
-                                                                        )))
+                                                    tabPanel("First-Spatial Point Pattern KDE Visualization",
+                                                             tmapOutput("SPPA1_output")
                                                     ),
                                                     tabPanel("K & L Function",
-                                                             plotlyOutput("KL_output"),
-                                                             tabsetPanel(
-                                                               id = "SPPA_info",
-                                                               tabPanel("About K and L function",
-                                                                        column(12,
-                                                                               h2("What is K function?"),
-                                                                               h5("k function calculates for a radius r the proportion of cells with a value below r 
-                                                                                  in the distance matrix between all the points Did. The K function estimates 
-                                                                                  'the average number of neighbours of a typical random point'. "),
-                                                                               
-                                                                               h2("What is L function?"),
-                                                                               h5("L Function is a summary statistic that provides information on the expected number of points within a certain 
-                                                                                  distance of other points, which can help identify patterns of point interactions, repulsions, 
-                                                                                  or regularity in the point pattern data."),
-                                                                               h2("How to interpret the output?"),
-                                                                               h5("- Observed K(r) or L(r) values below the envelope indicate lower than exprected density at radius r, i.e., significant sparseness."),
-                                                                               h5("- Observed K(r) or L(r) values within the envelope indicate no significant deviation from sparseness."),
-                                                                               h5("- Observed K(r) or L(r) values above the envelope indicate higher than exprected density at radius  r, i.e., significant clustering."),
-                                                                               
-                                                                               
-                                                                              
-                                                                        )))
+                                                             plotlyOutput("KL_output")
                                                     )
                                                   )
                                         )
@@ -228,6 +200,8 @@ ui <- navbarPage("Hospital Playlist",
                  tabPanel("Co-Location Analysis",fluid = TRUE, icon = icon("map-marker"),
                           sidebarLayout(position = 'left',
                                         sidebarPanel(fluid = TRUE, width = 3,
+                                                     id = "sidebar_panel",
+                                                     style = "background-color: inherit;",
                                                      tags$strong("Co-Location Analysis Variable Inputs"),
                                                      hr(),
                                                      selectInput(inputId = "kernel",
@@ -238,12 +212,13 @@ ui <- navbarPage("Hospital Playlist",
                                                                              "Epanechnikov" = "epanechnikov",
                                                                              "Uniform" = "uniform"),
                                                                  selected = "gaussian"),
-                                                     numericInput(inputId = "n_sim",
-                                                                  label = "Number of Simulations: (key in a number between 0 to 100)",
-                                                                  min = 0,
-                                                                  max = 100,
-                                                                  step = 1,
-                                                                  value = 49),
+                                                     selectInput(inputId = "n_sim1",
+                                                                  label = "Choose the significance level",
+                                                                  choices = c("0.01 Significance level" = 99,
+                                                                              "0.05 Significance level" = 39,
+                                                                              "0.10 Significance level" = 18
+                                                                              ),
+                                                                 selected = 39),
                                                      numericInput(inputId = "neighbour",
                                                                   label = "Number of neighbours",
                                                                   min = 0,
@@ -290,6 +265,8 @@ ui <- navbarPage("Hospital Playlist",
                  tabPanel("Network Constrained Spatial Point Pattern Analysis", fluid = TRUE, icon = icon("road"),
                           sidebarLayout(position = 'left',
                                         sidebarPanel(fluid = TRUE, width = 3,
+                                                     id = "sidebar_panel",
+                                                     style = "background-color: inherit;",
                                                      conditionalPanel(
                                                        'input.NetKDE === "Network Kernal Density Estimate Visualisation"',
                                                        tags$strong("Network Kernel Density Estimation Variable Inputs"),
@@ -310,10 +287,11 @@ ui <- navbarPage("Hospital Playlist",
                                                                                "Continuous" = "continuous"),
                                                                    selected = "simple"),
                                                        tags$strong("Visualisation Customisation"),
-                                                       selectInput("palette", "Select color palette:",
+                                                       selectInput("palette_N", "Select color palette:",
                                                                    choices = c("Reds", "Blues", "magma", "inferno", "cividis")),
                                                        selectInput("colour", "Select healthcare points color:",
-                                                                   choices = c("red", "green", "blue", "yellow", "purple", "lightblue")),
+                                                                   choices = c("red", "green", "blue", "yellow", "purple", "lightblue"),
+                                                                   selected = "blue"),
                                                        sliderInput("dot_size", "Select dot size:",
                                                                    min = 0.01, max = 0.1, value = 0.01, step = 0.01),
                                                        actionButton("NetKDE_Run", "Enter"),
@@ -321,17 +299,12 @@ ui <- navbarPage("Hospital Playlist",
                                                      ),
                                                      conditionalPanel(
                                                        'input.NetKDE === "Network Constrained K-Function Analysis"',
-                                                       numericInput(inputId = "N_SIM",
-                                                                    label = "Number of Simulations: (key in a number between 0 to 1000)",
-                                                                    min = 0,
-                                                                    max = 1000,
-                                                                    step = 1,
-                                                                    value = 99),
-                                                       numericInput(inputId = "conf",
-                                                                    label ="Confidence Interval: (Key in either, 0.01, 0.05, 0.10)",
-                                                                    min = 0.01,
-                                                                    max = 0.10,
-                                                                    value = 0.05),
+                                                       selectInput(inputId = "N_SIM",
+                                                                   label = "Choose the significance level",
+                                                                   choices = c("0.01 Significance level" = 99,
+                                                                               "0.05 Significance level" = 39,
+                                                                               "0.10 Significance level" = 18),
+                                                                   selected = 39),
                                                        sliderInput(inputId = "end_distance",
                                                                    label = "Select end distance",
                                                                    min = 0, 
@@ -342,12 +315,12 @@ ui <- navbarPage("Hospital Playlist",
                                                      ),
                                                      conditionalPanel(
                                                        'input.NetKDE === "Network Constrained K-Cross Function Analysis"',
-                                                       numericInput(inputId = "N_SIM",
-                                                                    label = "Number of Simulations: (key in a number between 0 to 1000)",
-                                                                    min = 0,
-                                                                    max = 1000,
-                                                                    step = 1,
-                                                                    value = 99),
+                                                       selectInput(inputId = "N_SIM_2",
+                                                                   label = "Choose the significance level",
+                                                                   choices = c("0.01 Significance level" = 99,
+                                                                               "0.05 Significance level" = 39,
+                                                                               "0.10 Significance level" = 18),
+                                                                   selected = 39),
                                                        numericInput(inputId = "conf",
                                                                     label ="Confidence Interval: (Key in either, 0.01, 0.05, 0.10)",
                                                                     min = 0.01,
@@ -436,6 +409,7 @@ ui <- navbarPage("Hospital Playlist",
                                                                                h5(tags$strong("the null hypothesis of CSR cannot be rejected (the value is not statistically significant) and we conclude the two types of points resemble random distribution and are independent of each other."))
                                                                         )))
                                                     )
+                                                    
                                                   )
                                         )
                           )
@@ -446,6 +420,48 @@ ui <- navbarPage("Hospital Playlist",
 
 
 server <- function(input, output) {
+  
+  mode <- reactiveVal("light")
+  
+  observeEvent(input$mode_toggle, {
+    if (mode() == "light") {
+      mode("dark")
+    } else {
+      mode("light")
+    }
+  })
+  
+  output$custom_css <- renderUI({
+    if (mode() == "light") {
+      tags$style(HTML("
+      body {
+        background-color: #f0f4fa;
+        color: #00008B;
+      }
+      .dark-mode {
+        background-color: #333;
+        color: #fof4fa;
+      }
+    "))
+    } else {
+      tags$style(HTML("
+      body {
+        background-color: #333;
+        color: #f0f4fa;
+      }
+      .dark-mode {
+        background-color: #ADD8E6;
+        color: #00008B;
+      }
+      .sidebar-panel {
+        background-color: #2b2b2b;
+      }
+    "))
+    }
+  })
+  
+  
+  
   check_file_extension <- function(filepath, ext) {
     tools::file_ext(filepath) %in% ext
   }
@@ -487,7 +503,7 @@ server <- function(input, output) {
         Healthcare <- point1()[point1()$name_en == input$selected_district, ]
         Variable <- point2()[point2()$name_en == input$selected_district, ]
         Network <- line1()[line1()$name_en == input$selected_district, ]
-        
+        filtered_name <- input$selected_district
         #reactive variables to use
         Healthcare_filtered(Healthcare)
         Variable_filtered(Variable)
@@ -500,8 +516,9 @@ server <- function(input, output) {
           tm_dots(col = "lightblue", size = 0.01, border.col = "black") +
           tm_shape(Variable) +
           tm_dots(col = "orange", size = 0.01, border.col = "black") +
-          
-          tm_layout(title = "Filtered Study Area and Intersections")
+          tm_layout(title = filtered_name) +
+          tmap_options(basemaps = c("Esri.WorldGrayCanvas","OpenStreetMap", "Stamen.TonerLite"),
+                       basemaps.alpha =c(0.75, 0.75, 0.75))
       })
       
       
@@ -556,9 +573,9 @@ server <- function(input, output) {
           tm_shape(kde_raster) + 
             tm_raster("v", alpha = 0.7) +
             tm_layout(legend.outside = TRUE, frame = FALSE, title = "KDE") +
+            tm_view(set.zoom.limits = c(11,13)) +
             tmap_options(basemaps = c("Esri.WorldGrayCanvas","OpenStreetMap", "Stamen.TonerLite"),
-                         basemaps.alpha = c(0.8, 0.8, 0.8)) +
-            tm_view(set.zoom.limits = c(11,13)) 
+                         basemaps.alpha =c(0.75, 0.75, 0.75))
           
         })
       }) 
@@ -581,8 +598,8 @@ server <- function(input, output) {
           }else{
             c="L(d)-r"
           }
-          
-          klfunction <- envelope(healthcare_owin, input$KL, nsim = input$nsim, rank = 1, glocal=TRUE)
+        
+          klfunction <- envelope(healthcare_owin, input$KL, nsim = as.numeric(input$n_sim), rank = 1, glocal=TRUE)
           klfunc_df <- as.data.frame(klfunction)
           
           colour=c("#0D657D","#ee770d","#D3D3D3")
@@ -661,21 +678,30 @@ server <- function(input, output) {
                                            adaptive = TRUE)
         A <- Healthcare_filtered()$type
         B <- Variable_filtered()$type
-        LCLQ_healthcare <- local_colocation(A, B, nb_healthcare, wt_healthcare, input$n_sim)
+        LCLQ_healthcare <- local_colocation(A, B, nb_healthcare, wt_healthcare, as.numeric(input$n_sim1))
         healthcare_variable_LCLQ <- cbind(healthcare_variable, LCLQ_healthcare)
         
         p_sim_column <- grep("p_sim", colnames(healthcare_variable_LCLQ), value = TRUE)
-        significant <-subset(healthcare_variable_LCLQ, healthcare_variable_LCLQ[[p_sim_column]] < as.numeric(input$alpha))
-        if (nrow(significant) >0){
+        Significant <-subset(healthcare_variable_LCLQ, healthcare_variable_LCLQ[[p_sim_column]] < as.numeric(input$alpha) | is.na(healthcare_variable_LCLQ[[p_sim_column]])== FALSE)
+        Not_significant <- subset(healthcare_variable_LCLQ, healthcare_variable_LCLQ[[p_sim_column]] > as.numeric(input$alpha) | is.na(healthcare_variable_LCLQ[[p_sim_column]]))
+
+        if (nrow(Significant) >0 && 
+            nrow(Not_significant) > 0){
           output$Colocation_V <- renderTmap({
             tm_shape(Studyarea_filtered())+
               tm_polygons() +
-              tm_shape(significant)+ 
+              tm_shape(Significant)+ 
               tm_dots(col = p_sim_column,
                       size = input$dot_size,
                       border.col = "black",
                       border.lwd = 0.5,
-                      palette = input$palette)
+                      palette = input$palette) +
+              tm_shape(Not_significant) +
+              tm_dots(col = "black",
+                      size = 0.01) +
+              tmap_options(basemaps = c("Esri.WorldGrayCanvas","OpenStreetMap", "Stamen.TonerLite"),
+                           basemaps.alpha =c(0.75, 0.75, 0.75))
+            
           })
         }
         else {
@@ -721,19 +747,30 @@ server <- function(input, output) {
           lixels$density <- densities*1000
           tm_shape(lixels)+
             tm_lines(col="density",
-                     palette = input$palette) +
+                     palette = input$palette_N) +
             tm_shape(Healthcare_filtered()) +
             tm_dots(col = input$colour,
-                    size = input$dot_size)
+                    size = input$dot_size) +
+            tmap_options(basemaps = c("Esri.WorldGrayCanvas","OpenStreetMap", "Stamen.TonerLite"),
+                         basemaps.alpha =c(0.75, 0.75, 0.75))
         })
       })
       #=============================================================================
-      #NetKDE K Function
+      # NetKDE K Function
       observeEvent(input$NetKDE_Kfunc_run, {
         output$NetKDE_Kfunction <- renderPlotly({
           req(Healthcare_filtered(), Variable_filtered(), Network_filtered(), Studyarea_filtered())
           H <- Healthcare_filtered()
           N <- Network_filtered()
+          
+          if (input$N_SIM  == 18){
+            conf <- 0.10
+          } else if (input$N_SIM == 39){
+            conf <- 0.05
+          } else if (input$N_SIM == 99){
+            conf <- 0.01
+          }
+          
           kfun_hospital <- kfunctions(N, 
                                       H,
                                       start = 0, 
@@ -744,7 +781,7 @@ server <- function(input, output) {
                                       resolution = 50,
                                       verbose = FALSE,
                                       digits = 10,
-                                      conf_int = input$conf)
+                                      conf_int = conf)
           kfun_df <- data.frame(kfun_hospital$values)
           colour=c("#0D657D","#ee770d","#D3D3D3")
           csr_plot <- ggplot(kfun_df, aes(distances, obs_k))+
@@ -807,6 +844,13 @@ server <- function(input, output) {
           H <- Healthcare_filtered()
           V <- Variable_filtered()
           N <- Network_filtered()
+          if (input$N_SIM_2  == 18){
+            conf_C <- 0.10
+          } else if (input$N_SIM_2 == 39){
+            conf_C <- 0.05
+          } else if (input$N_SIM_2 == 99){
+            conf_C <- 0.01
+          }
           crossfun_hospital<- cross_kfunctions(N, 
                                                V, 
                                                H, 
@@ -814,9 +858,9 @@ server <- function(input, output) {
                                                end = input$end_distance, 
                                                step = 50, 
                                                width = 50, 
-                                               nsim = input$N_SIM,
+                                               nsim = as.numeric(input$N_SIM_2),
                                                agg = 100,
-                                               conf_int = input$conf)
+                                               conf_int = conf_C)
           crossfun_df <- data.frame(crossfun_hospital$values)
           colour=c("#0D657D","#ee770d","#D3D3D3")
           csr_plot <- ggplot(crossfun_df, aes(distances, obs_k))+
@@ -888,7 +932,6 @@ server <- function(input, output) {
       ))
     }
   })
-  
   
   
 }
