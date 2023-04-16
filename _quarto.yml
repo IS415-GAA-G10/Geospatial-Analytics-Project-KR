@@ -11,6 +11,9 @@ website:
       href: "Research_Paper.html"
     - text: "Rshiny Application"
       href: "https://junhaoteo.shinyapps.io/is415_gaa_Hospital_Playlist/"
+    - text: "Poster"
+      href: "Poster.html"
+
     right: 
       - href: index.qmd
         text: Home
